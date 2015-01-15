@@ -4,9 +4,12 @@
 //  Distributed under the Boost Software License, Version 1.0. (See accompanying
 //  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
+// #include <hpx/hpx_fwd.hpp>
+// #include <hpx/hpx.hpp>
+// #include <hpx/include/components.hpp>
+//#include <hpx/runtime/components/server/managed_component_base.hpp>
 
-#include <hpx/hpx_init.hpp>
-#include <hpx/hpx.hpp>
+#include <hpx/runtime/actions/component_action.hpp>
 #include <hpx/components/distributing_factory/distributing_factory.hpp>
 
 
@@ -99,7 +102,6 @@ void components::antibodies_factory::spawn_antibodies(std::size_t num)
     {
         antibodies_.push_back(id);
     }
-
 }
 
 
@@ -112,29 +114,34 @@ void components::antibodies_factory::kill_antibodies()
 //###########################################################################
 
 //typedef ::components::antibodies_factory ab_factory_type;
-typedef ::components::antibodies_factory ab_factory_type;
+//typedef ::components::antibodies_factory ab_factory_type;
 
 //HPX_REGISTER_MINIMAL_COMPONENT_FACTORY(
 //    hpx::components::managed_component<ab_factory_type>, ab_ab_factory_type);
     
 
-HPX_REGISTER_ACTION(ab_factory_type::init_abf_action
-    , antibodies_factory_init_abf_action);
+//HPX_REGISTER_ACTION(ab_factory_type::init_abf_action
+//    , antibodies_factory_init_abf_action);
 
-HPX_REGISTER_ACTION(ab_factory_type::spawn_antibody_action
-    , antibodies_factory_spawn_antibody_action);
+//HPX_REGISTER_ACTION(ab_factory_type::spawn_antibody_action
+//    , antibodies_factory_spawn_antibody_action);
 
-HPX_REGISTER_ACTION(
-    ::components::antibodies_factory::spawn_antibodies_action,
-    antibodies_factory_spawn_antibodies_action
-    );
+//HPX_REGISTER_ACTION(
+//    ::components::antibodies_factory::spawn_antibodies_action,
+//    antibodies_factory_spawn_antibodies_action
+ //   );
 
-HPX_REGISTER_ACTION(ab_factory_type::alien_factory_active_action
-    , antibodies_factory_alien_factory_active_action);
+//HPX_REGISTER_ACTION(ab_factory_type::alien_factory_active_action
+//    , antibodies_factory_alien_factory_active_action);
 
 
 /////////////////////////////////////////////////////////////////////////////
 
+// HPX_REGISTER_COMPONENT_MODULE();
+// 
+// HPX_REGISTER_MINIMAL_COMPONENT_FACTORY(
+// hpx::components::managed_component< ::components::antibodies>
+// , antibodies_component);
 /*typedef ::components::alien_factory alien_factory_type;
 
 HPX_REGISTER_MINIMAL_COMPONENT_FACTORY(

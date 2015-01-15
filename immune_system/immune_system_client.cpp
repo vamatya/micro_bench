@@ -14,17 +14,16 @@
 //HPX_REGISTER_COMPONENT_MODULE();
 
 
-/*typedef ::components::antibodies_factory ab_factory_type;
+// typedef ::components::antibodies_factory ab_factory_type;
+// 
+// HPX_REGISTER_MINIMAL_COMPONENT_FACTORY(
+//     hpx::components::managed_component<ab_factory_type>, ab_ab_factory_type);
 
-HPX_REGISTER_MINIMAL_COMPONENT_FACTORY(
-    hpx::components::managed_component<ab_factory_type>, ab_ab_factory_type);
+// typedef ::components::antibodies antibodies_type;
+// 
+// HPX_REGISTER_MINIMAL_COMPONENT_FACTORY(
+//     hpx::components::managed_component<antibodies_type>, ab_antibodies_type);
 
-typedef ::components::antibodies antibodies_type;
-
-HPX_REGISTER_MINIMAL_COMPONENT_FACTORY(
-    hpx::components::managed_component<antibodies_type>, ab_antibodies_type);
-
-    */
 
 int hpx_main(boost::program_options::variables_map & vm)
 {
