@@ -6,7 +6,7 @@
 
 #include "antibodies.hpp"
 
-// HPX_REGISTER_COMPONENT_MODULE();
+/*HPX_REGISTER_COMPONENT_MODULE();*/
 
 /*HPX_REGISTER_MINIMAL_COMPONENT_FACTORY(
 hpx::components::managed_component< ::components::alien_factory>
@@ -16,13 +16,13 @@ HPX_REGISTER_MINIMAL_COMPONENT_FACTORY(
 hpx::components::managed_component< ::components::aliens>
 , aliens_component);*/
 
-// HPX_REGISTER_MINIMAL_COMPONENT_FACTORY(
-// hpx::components::managed_component< ::components::antibodies_factory>
-// , antibodies_factory_component);
-
 HPX_REGISTER_MINIMAL_COMPONENT_FACTORY(
-hpx::components::managed_component< ::components::antibodies>
-, antibodies_component);
+hpx::components::managed_component< ::components::antibodies_factory>
+, antibodies_factory_component);
+
+// HPX_REGISTER_MINIMAL_COMPONENT_FACTORY(
+// hpx::components::managed_component< ::components::antibodies>
+// , antibodies_component);
 
 
 typedef ::components::antibodies_factory ab_factory_type;
