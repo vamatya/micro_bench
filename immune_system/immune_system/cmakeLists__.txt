@@ -1,0 +1,56 @@
+# Copyright (c) 2011 Bryce Adelstein-Lelbach
+# Copyright (c) 2012 Daniel Kogler
+#
+# Distributed under the Boost Software License, Version 1.0. (See accompanying
+# file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+set(immune_systems
+    immune_system
+   )
+
+add_definitions(-DBRG_RNG)
+
+foreach(immune_system ${immune_systems})
+  set(sources
+      ${immune_system}.cpp #rng/brg_sha1.cpp
+      )
+
+  #########################################################################
+
+  set(server_sources
+    server/antibodies_factory.cpp
+    server/foreign_bodies_factory.cpp)
+
+  set(server_headers
+    server/antibodies_factory.hpp
+    server/foreign_bodies_factory.hpp)
+
+  source_group("Source Files" FILES ${sources})
+  source_group("Header Files\\Server" FILES ${server_headers})
+  source_group("Source Files\\Server" FILES ${server_sources})
+
+  ########################################################################
+  #set(components_list
+  #  antibodies_factory
+  #  )
+  #add_hpx_component()
+  #########################################################################
+  # add example executable
+  add_hpx_executable(${immune_system}
+                     SOURCES ${sources} 
+                     ${${immune_system}_FLAGS}
+                     COMPONENT_DEPENDENCIES iostreams
+                     FOLDER "Micro_bench/Immune_system/${immune_system}")
+
+  # add a custom target for this example
+  add_hpx_pseudo_target(micro_bench.immune_system.${immune_system})
+
+  # make pseudo-targets depend on master pseudo-target
+  add_hpx_pseudo_dependencies(micro_bench.immune_system
+                              micro_bench.immune_system.${immune_system})
+
+  # add dependencies to pseudo-target
+  add_hpx_pseudo_dependencies(micro_bench.immune_system.${immune_system}
+                              ${immune_system}_exe)
+endforeach()
+
