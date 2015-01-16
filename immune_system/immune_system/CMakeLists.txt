@@ -73,26 +73,9 @@ source_group("Source Files" FILES ${sources})
 #  FOLDER "Micro_bench/Immune_system/Immune_system")
 
 
-###############################################################################
-
-set(abf_comp_sources
-    ${abf_server_sources}
-    ${abf_sources}
-    )
-
-set(abf_comp_headers
-    ${abf_server_headers}
-    )
-
-add_hpx_component(antibodies_factory
-  SOURCES ${abf_comp_sources}
-  HEADERS ${abf_comp_headers}
-  DEPENDENCIES distributing_factory_component
-  FOLDER "Micro_bench/Immune_system/Abf_component")
-
 #################################################################################  
 
-et(ab_comp_sources
+set(ab_comp_sources
     ${ab_server_sources}
     ${ab_sources}
     )
@@ -108,3 +91,19 @@ add_hpx_component(antibodies
   FOLDER "Micro_bench/Immune_system/Ab_component")
 
 
+###############################################################################
+
+set(abf_comp_sources
+    ${abf_server_sources}
+    ${abf_sources}
+    )
+
+set(abf_comp_headers
+    ${abf_server_headers}
+    )
+
+add_hpx_component(antibodies_factory
+  SOURCES ${abf_comp_sources}
+  HEADERS ${abf_comp_headers}
+  DEPENDENCIES distributing_factory_component antibodies_component
+  FOLDER "Micro_bench/Immune_system/Abf_component")

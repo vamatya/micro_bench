@@ -171,7 +171,7 @@ inline std::vector<hpx::id_type> create_ab_factory(
     std::vector<hpx::future<void> > resolve_names_fut;
     resolve_names_fut.reserve(num_ab_factories);
 
-    typedef components::antibodies_factory::spawn_antibodies_action spawn_action;
+    typedef components::server::antibodies_factory::spawn_antibodies_action spawn_action;
 
     //typedef components::antibodies_factory::init_abf_action action_type2;
     //typedef components::antibodies_factory::spawn_antibody_action action_type3;
