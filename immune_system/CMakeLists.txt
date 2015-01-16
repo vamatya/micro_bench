@@ -24,27 +24,27 @@ foreach(subdir ${subdirs})
   source_group("Header Files\\Immune_system" FILES ${headers})
 
   set(components
-      #${subdir}_component
-      antibodies_component
-      antibodies_factory_component
+      #${subdir}
+      #antibodies
+      antibodies_factory
       )
 
   # add example executable
   add_hpx_executable(${subdir}_client
     SOURCES ${sources}
     HEADERS ${headers}
-    DEPENDENCIES ${components}
+    DEPENDENCIES immune_system/${components}_components
     FOLDER "Micro_bench/Immune_system")
 
   # add a custom target for this example
   add_hpx_pseudo_target(micro_bench.immune_system.${subdir})
 
   # make pseudo-targets depend on master pseudo-target
-  add_hpx_pseudo_dependencies(micro_bench.immune_system
-                              micro_bench.immune_system.${subdir})
+  add_hpx_pseudo_dependencies(micro_bench.immune_system.immune_system
+                              micro_bench.immune_system.immune_system${subdir})
 
   # add dependencies to pseudo-target
-  add_hpx_pseudo_dependencies(micro_bench.immune_system.${subdir}
+  add_hpx_pseudo_dependencies(micro_bench.immune_system.immune_system${subdir}
                               ${subdir}_exe)
 endforeach()
 
