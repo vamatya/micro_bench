@@ -12,7 +12,7 @@
 #include "antibodies.hpp"
 
 
-bool components::antibodies::alien_connect(hpx::id_type target)
+bool components::server::antibodies::alien_connect(hpx::id_type target)
 {
     // update target. 
     target_ = target;
@@ -29,7 +29,7 @@ bool components::antibodies::alien_connect(hpx::id_type target)
     return true;
 }
 
-bool components::antibodies::send_spawn_signal()
+bool components::server::antibodies::send_spawn_signal()
 {
     //typedef ::components::antibodies_factory::spawn_antibodies_action
     //    act_type;
@@ -41,13 +41,9 @@ bool components::antibodies::send_spawn_signal()
 
 /////////////////////////////////////////////////////////////////////////////
 
-//typedef ::components::antibodies antibodies_type;
-typedef ::components::antibodies antibodies_type;
-
-//HPX_REGISTER_MINIMAL_COMPONENT_FACTORY(
-//    hpx::components::managed_component<antibodies_type>, ab_antibodies_type);
-
-HPX_REGISTER_ACTION(antibodies_type::alien_connect_action
-    , antibodies_alien_connect_action);
+// typedef ::components::server::antibodies antibodies_type;
+// 
+// HPX_REGISTER_ACTION(antibodies_type::alien_connect_action
+//     , antibodies_alien_connect_action);
 
 /////////////////////////////////////////////////////////////////////////////

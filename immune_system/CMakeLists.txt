@@ -16,7 +16,12 @@ foreach(subdir ${subdirs})
   set(sources
       ${subdir}_client.cpp)
 
+  set(headers
+      ${subdir}/${subdir}.hpp
+      )
+
   source_group("Source Files" FILES ${sources})
+  source_group("Header Files\\Immune_system" FILES ${headers})
 
   set(components
       #${subdir}_component
@@ -27,6 +32,7 @@ foreach(subdir ${subdirs})
   # add example executable
   add_hpx_executable(${subdir}_client
     SOURCES ${sources}
+    HEADERS ${headers}
     DEPENDENCIES ${components}
     FOLDER "Micro_bench/Immune_system")
 

@@ -4,8 +4,8 @@
 //  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
 
-#ifndef IMMUNE_SYSTEM_ANTIBODIES_HPP
-#define IMMUNE_SYSTEM_ANTIBODIES_HPP
+#ifndef IMMUNE_SYSTEM_SERVER_ANTIBODIES_HPP
+#define IMMUNE_SYSTEM_SERVER_ANTIBODIES_HPP
 
 #include <hpx/hpx_fwd.hpp>
 #include <hpx/include/components.hpp>
@@ -16,62 +16,64 @@
 //#include <immune_system/server/foreign_bodies_factory.hpp>
 
 
-namespace components
-{
-
-    struct antibodies
-        : hpx::components::managed_component_base<antibodies>
+namespace components {
+    namespace server
     {
 
-        // Contact the Antibody targeted for, (error case). 
-        // If the alien already has all the contact points filled, 
-        // contact ab_factory for possible new target, or (self destroy??)
-        // or get terminated??
-        antibodies(){};
-
-        // Explicitly destroy superfluous antibodies. 
-        // Done by the antibodies_factory. 
-        ~antibodies(){};
-
-        // look for target as soon as antibody is created.
-        antibodies(hpx::id_type target, hpx::id_type my_id)
-            : target_attached(false)
-            , target_(target)
-            , my_id_(my_id)
+        struct antibodies
+            : hpx::components::managed_component_base < antibodies >
         {
-            //
-            //typedef ::components::aliens::ab_connect_action action_type;
-            //hpx::future<bool> connect = hpx::async<action_type>(target);
 
-            //if(!connect.get())
+            // Contact the Antibody targeted for, (error case). 
+            // If the alien already has all the contact points filled, 
+            // contact ab_factory for possible new target, or (self destroy??)
+            // or get terminated??
+            antibodies(){};
+
+            // Explicitly destroy superfluous antibodies. 
+            // Done by the antibodies_factory. 
+            ~antibodies(){};
+
+            // look for target as soon as antibody is created.
+            antibodies(hpx::id_type target, hpx::id_type my_id)
+                : target_attached(false)
+                , target_(target)
+                , my_id_(my_id)
             {
-                //notify antibodies_factory that connection failed
-                //typedef components::antibodies_factory::noconnect_notify_action 
+                //
+                //typedef ::components::aliens::ab_connect_action action_type;
+                //hpx::future<bool> connect = hpx::async<action_type>(target);
+
+                //if(!connect.get())
+                {
+                    //notify antibodies_factory that connection failed
+                    //typedef components::antibodies_factory::noconnect_notify_action 
                     //action_type;
+                }
             }
-        }
 
-        bool alien_connect(hpx::id_type target);
+            bool alien_connect(hpx::id_type target);
 
-        HPX_DEFINE_COMPONENT_ACTION(antibodies, alien_connect);
+            HPX_DEFINE_COMPONENT_ACTION(antibodies, alien_connect);
 
-        bool send_spawn_signal();
+            bool send_spawn_signal();
 
-    private:
-        hpx::id_type my_id_;
-        hpx::id_type target_;
-        bool target_attached;
+        private:
+            hpx::id_type my_id_;
+            hpx::id_type target_;
+            bool target_attached;
 
-        std::size_t gen_id;
-        std::size_t fb_contact_count;
+            std::size_t gen_id;
+            std::size_t fb_contact_count;
 
-    };    
+        };
+    }
 }
 
 //////////////////////////////////////////////////////////////////
 
 HPX_REGISTER_ACTION_DECLARATION(
-    ::components::antibodies::alien_connect_action
+    ::components::server::antibodies::alien_connect_action
     , antibodies_alien_connect_action
     )
 
@@ -90,4 +92,4 @@ HPX_REGISTER_ACTION_DECLARATION(
     aliens_send_spawn_signal_action
     );
     */
-#endif //IMMUNE_SYSTEM_ANTIBODIES_HPP
+#endif //IMMUNE_SYSTEM_SERVER_ANTIBODIES_HPP

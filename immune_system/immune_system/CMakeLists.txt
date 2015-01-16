@@ -6,67 +6,105 @@
 
 ###############################################################################
 
-set(server_sources
+set(abf_server_sources
     server/antibodies_factory.cpp
     #server/foreign_bodies_factory.cpp
     #server/foreign_bodies.cpp
+    #server/antibodies.cpp
+    )
+
+set(abf_server_headers
+    server/antibodies_factory.hpp
+    )
+
+set(abf_sources
+    antibodies_factory.cpp
+    )
+
+    #*************************************
+
+set(ab_server_sources
     server/antibodies.cpp
     )
 
-set(server_headers
-    server/antibodies_factory.hpp
-    #server/foreign_bodies_factory.hpp
-    #server/foreign_bodies.hpp
+set(ab_server_headers
     server/antibodies.hpp
     )
 
-set(header_files
-    antibodies.hpp
-    #foreign_bodies.hpp
-    )
-
-set(source_files
+set(ab_sources
     antibodies.cpp
     )
+
 ###############################################################################
-set(headers
+set(server_sources
+    ${abf_server_sources}
+    ${ab_server_sources}
+    )
+
+set(server_headers
+    ${abf_server_headers}
+    $ab_server_headers}
+    )
+
+#set(headers
     #${client_headers}
     #${stubs_headers}
-    ${server_headers}
-    ${header_files})
+    #${server_headers}
+    #${header_files})
 
 set(sources
-    ${server_sources}
-    ${source_files}
+    ${abf_sources}
+    ${ab_sources}
+    #${server_sources}
+    #${source_files}
     )
 
 ###############################################################################
-#source_group("Source Files\\Client" FILES ${client_sources})
-#source_group("Header Files\\Client" FILES ${client_headers})
-#source_group("Header Files\\Stubs"  FILES ${stubs_headers})
 source_group("Source Files\\Server" FILES ${server_sources})
 source_group("Header Files\\Server" FILES ${server_headers})
-source_group("Header Files" FILES ${header_files})
-source_group("Source Files" FILES ${source_files})
+#source_group("Header Files" FILES ${header_files})
+source_group("Source Files" FILES ${sources})
 
 ###############################################################################
 #add_hpx_component(immune_system
 #  SOURCES ${sources}
 #  HEADERS ${headers}
 #  DEPENDENCIES distributing_factory_component
-#  FOLDER "Micro_bench/Immune_system")
+#  FOLDER "Micro_bench/Immune_system/Immune_system")
 
+
+###############################################################################
+
+set(abf_comp_sources
+    ${abf_server_sources}
+    ${abf_sources}
+    )
+
+set(abf_comp_headers
+    ${abf_server_headers}
+    )
 
 add_hpx_component(antibodies_factory
-  SOURCES ${sources}
-  HEADERS ${headers}
+  SOURCES ${abf_comp_sources}
+  HEADERS ${abf_comp_headers}
   DEPENDENCIES distributing_factory_component
-  FOLDER "Micro_bench/Immune_system")
+  FOLDER "Micro_bench/Immune_system/Abf_component")
+
+#################################################################################  
+
+et(ab_comp_sources
+    ${ab_server_sources}
+    ${ab_sources}
+    )
+
+set(ab_comp_headers
+    ${ab_server_headers}
+    )
 
 add_hpx_component(antibodies
-  SOURCES ${sources}
-  HEADERS ${headers}
+  SOURCES ${ab_comp_sources}
+  HEADERS ${ab_comp_headers}
   DEPENDENCIES distributing_factory_component
-  FOLDER "Micro_bench/Immune_system")
+  FOLDER "Micro_bench/Immune_system/Ab_component")
 
 

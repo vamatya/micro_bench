@@ -23,41 +23,41 @@
 
 //###########################################################################
 
-void components::antibodies_factory::init_abf()
+void components::server::antibodies_factory::init_abf()
 {
 
 }
 
-void components::antibodies_factory::resolve_names(std::vector<hpx::id_type> ids)
+void components::server::antibodies_factory::resolve_names(std::vector<hpx::id_type> ids)
 {
     fac_ids_ = ids;
 }
 
-bool components::antibodies_factory::alien_factory_active()
+bool components::server::antibodies_factory::alien_factory_active()
 {
     return true;
 }
 
-bool components::antibodies_factory::get_alien_factory(hpx::id_type al_factory)
+bool components::server::antibodies_factory::get_alien_factory(hpx::id_type al_factory)
 {
     al_factory_ = al_factory;
     return true;
 }
 
-bool components::antibodies_factory::scan_aliens()
+bool components::server::antibodies_factory::scan_aliens()
 {
     return true;
 }
 
 
-void components::antibodies_factory::spawn_antibody()
+void components::server::antibodies_factory::spawn_antibody()
 {
-    typedef ::components::antibodies::alien_connect_action;
+    typedef ::components::server::antibodies::alien_connect_action;
 }
 
 
 
-void components::antibodies_factory::spawn_antibodies(std::size_t num)
+void components::server::antibodies_factory::spawn_antibodies(std::size_t num)
 {
     typedef hpx::util::remote_locality_result value_type;
     typedef std::pair<std::size_t, std::vector<value_type> > result_type;
@@ -68,7 +68,7 @@ void components::antibodies_factory::spawn_antibodies(std::size_t num)
     typedef std::vector<hpx::id_type> id_vector_type;
 
     hpx::components::component_type c_type =
-        hpx::components::get_component_type<::components::antibodies>();
+        hpx::components::get_component_type<::components::server::antibodies>();
 
     hpx::id_type this_loc = hpx::find_here();
 
@@ -105,7 +105,7 @@ void components::antibodies_factory::spawn_antibodies(std::size_t num)
 }
 
 
-void components::antibodies_factory::kill_antibodies()
+void components::server::antibodies_factory::kill_antibodies()
 {
 
 }
@@ -114,25 +114,23 @@ void components::antibodies_factory::kill_antibodies()
 //###########################################################################
 
 //typedef ::components::antibodies_factory ab_factory_type;
-typedef ::components::antibodies_factory ab_factory_type;
-
-//HPX_REGISTER_MINIMAL_COMPONENT_FACTORY(
-//    hpx::components::managed_component<ab_factory_type>, ab_ab_factory_type);
-    
-
-HPX_REGISTER_ACTION(ab_factory_type::init_abf_action
-   , antibodies_factory_init_abf_action);
-
-HPX_REGISTER_ACTION(ab_factory_type::spawn_antibody_action
-   , antibodies_factory_spawn_antibody_action);
-
-HPX_REGISTER_ACTION(
-   ::components::antibodies_factory::spawn_antibodies_action,
-   antibodies_factory_spawn_antibodies_action
- //   );
-
-HPX_REGISTER_ACTION(ab_factory_type::alien_factory_active_action
-   , antibodies_factory_alien_factory_active_action);
+// typedef ::components::server::antibodies_factory ab_factory_type;
+// 
+// //HPX_REGISTER_MINIMAL_COMPONENT_FACTORY(
+// //    hpx::components::managed_component<ab_factory_type>, ab_ab_factory_type);
+//     
+// 
+// HPX_REGISTER_ACTION(ab_factory_type::init_abf_action
+//    , antibodies_factory_init_abf_action);
+// 
+// HPX_REGISTER_ACTION(ab_factory_type::spawn_antibody_action
+//    , antibodies_factory_spawn_antibody_action);
+// 
+// HPX_REGISTER_ACTION(ab_factory_type::spawn_antibodies_action,
+//    antibodies_factory_spawn_antibodies_action);
+// 
+// HPX_REGISTER_ACTION(ab_factory_type::alien_factory_active_action
+//    , antibodies_factory_alien_factory_active_action);
 
 
 /////////////////////////////////////////////////////////////////////////////

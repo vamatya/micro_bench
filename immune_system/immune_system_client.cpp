@@ -28,7 +28,7 @@
 int hpx_main(boost::program_options::variables_map & vm)
 {
     std::vector<hpx::id_type> ab_fac =
-        create_ab_factory<components::antibodies_factory>(vm);
+        create_ab_factory<components::server::antibodies_factory>(vm);
 
     //std::vector<hpx::id_type> aln_fac =
         //create_alien_factory<components::alien_factory>(vm,ab_fac);
