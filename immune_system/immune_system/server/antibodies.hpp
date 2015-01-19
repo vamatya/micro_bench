@@ -9,14 +9,14 @@
 
 #include <hpx/hpx_fwd.hpp>
 #include <hpx/include/components.hpp>
-//#include <hpx/runtime/components/server/managed_component_base.hpp>
 #include <hpx/runtime/actions/component_action.hpp>
+#include <hpx/runtime/components/server/managed_component_base.hpp>
 
 //#include <immune_system/server/antibodies_factory.hpp>
 //#include <immune_system/server/foreign_bodies_factory.hpp>
 
 
-namespace components {
+namespace immune_system {
     namespace server
     {
 
@@ -28,11 +28,11 @@ namespace components {
             // If the alien already has all the contact points filled, 
             // contact ab_factory for possible new target, or (self destroy??)
             // or get terminated??
-            antibodies();
+            antibodies(){}
 
             // Explicitly destroy superfluous antibodies. 
             // Done by the antibodies_factory. 
-            ~antibodies();
+            ~antibodies(){}
 
             // look for target as soon as antibody is created.
             antibodies(hpx::id_type target, hpx::id_type my_id)
@@ -94,7 +94,7 @@ namespace components {
 //////////////////////////////////////////////////////////////////
 
 HPX_REGISTER_ACTION_DECLARATION(
-    ::components::server::antibodies::alien_connect_action
+    immune_system::server::antibodies::alien_connect_action
     , antibodies_alien_connect_action
     )
 

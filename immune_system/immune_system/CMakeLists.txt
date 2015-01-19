@@ -10,11 +10,12 @@ set(server_sources
     server/antibodies_factory.cpp
     #server/foreign_bodies_factory.cpp
     #server/foreign_bodies.cpp
-    #server/antibodies.cpp
+    server/antibodies.cpp
     )
 
 set(server_headers
     server/antibodies_factory.hpp
+    server/antibodies.hpp
     )
 
 set(source_files
