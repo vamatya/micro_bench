@@ -4,19 +4,16 @@
 //  Distributed under the Boost Software License, Version 1.0. (See accompanying
 //  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-// #include <hpx/hpx_fwd.hpp>
-// #include <hpx/hpx.hpp>
-// #include <hpx/include/components.hpp>
-//#include <hpx/runtime/components/server/managed_component_base.hpp>
+#include <hpx/hpx_fwd.hpp>
+#include <hpx/runtime/actions/continuation.hpp>
+#include <hpx/runtime/components/component_factory.hpp>
+#include <hpx/runtime.hpp>
 
-#include <hpx/runtime/actions/component_action.hpp>
-#include <hpx/components/distributing_factory/distributing_factory.hpp>
+#include <hpx/util/portable_binary_iarchive.hpp>
+#include <hpx/util/portable_binary_oarchive.hpp>
 
-
-//#include "antibodies.hpp"
 #include "antibodies_factory.hpp"
-//#include "foreign_bodies_factory.hpp"
-//#include "foreign_bodies.hpp"
+
 
 
 

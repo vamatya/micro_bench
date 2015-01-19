@@ -9,7 +9,7 @@
 #include <hpx/hpx_fwd.hpp>
 
 //#include <immune_system/immune_system/antibodies.hpp>
-#include <immune_system/immune_system.hpp>
+#include <immune_system/immune_system/immune_system.hpp>
 
 //#include <immune_system/immune_system/foreign_bodies.hpp>
 
@@ -31,7 +31,7 @@
 int hpx_main(boost::program_options::variables_map & vm)
 {
     std::vector<hpx::id_type> ab_fac =
-        create_ab_factory<components::server::antibodies_factory>(vm);
+        create_ab_factory<immune_system::server::antibodies_factory>(vm);
 
     //std::vector<hpx::id_type> aln_fac =
         //create_alien_factory<components::alien_factory>(vm,ab_fac);

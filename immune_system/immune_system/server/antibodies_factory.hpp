@@ -9,6 +9,7 @@
 
 #include <hpx/hpx_fwd.hpp>
 #include <hpx/include/components.hpp>
+#include <hpx/runtime/actions/component_action.hpp>
 #include <hpx/runtime/components/server/managed_component_base.hpp>
 
 //#include <immune_system/server/foreign_bodies_factory.hpp>
@@ -27,7 +28,7 @@ namespace immune_system{
 
             //TO DO: create another header file.
 
-            antibodies_factory();// {}
+            antibodies_factory(){}
 
             antibodies_factory(hpx::id_type my_id)
                 : my_id_(my_id)
@@ -95,49 +96,49 @@ namespace immune_system{
             //Spawn \N Antibodies
             void spawn_antibodies(std::size_t num)
             {
-                typedef hpx::util::remote_locality_result value_type;
-                typedef std::pair<std::size_t, std::vector<value_type> > result_type;
-
-                result_type res;
-
-
-                typedef std::vector<hpx::id_type> id_vector_type;
-
-                hpx::components::component_type c_type =
-                    hpx::components::get_component_type<::components::server::antibodies>();
-
-                hpx::id_type this_loc = hpx::find_here();
-
-                typedef
-                    hpx::components::server::runtime_support::bulk_create_components_action
-                    action_type;
-
-                typedef hpx::future<std::vector<hpx::naming::gid_type> > future_type;
-
-                future_type f;
-                {
-                    hpx::lcos::packaged_action < action_type
-                        , std::vector<hpx::naming::gid_type> > p;
-                    p.apply(hpx::launch::async, this_loc, c_type, num);
-                    f = p.get_future();
-                }
-
-
-                res.first = num;
-                res.second.back().gids_ = boost::move(f.get());
-
-                antibodies_.reserve(num);
-
-                std::vector<hpx::util::locality_result> res2;
-                BOOST_FOREACH(hpx::util::remote_locality_result const& r1, res.second)
-                {
-                    res2.push_back(r1);
-                }
-
-                BOOST_FOREACH(hpx::id_type id, hpx::util::locality_results(res2))
-                {
-                    antibodies_.push_back(id);
-                }
+//                 typedef hpx::util::remote_locality_result value_type;
+//                 typedef std::pair<std::size_t, std::vector<value_type> > result_type;
+// 
+//                 result_type res;
+// 
+// 
+//                 typedef std::vector<hpx::id_type> id_vector_type;
+// 
+//                 hpx::components::component_type c_type =
+//                     hpx::components::get_component_type<::components::server::antibodies>();
+// 
+//                 hpx::id_type this_loc = hpx::find_here();
+// 
+//                 typedef
+//                     hpx::components::server::runtime_support::bulk_create_components_action
+//                     action_type;
+// 
+//                 typedef hpx::future<std::vector<hpx::naming::gid_type> > future_type;
+// 
+//                 future_type f;
+//                 {
+//                     hpx::lcos::packaged_action < action_type
+//                         , std::vector<hpx::naming::gid_type> > p;
+//                     p.apply(hpx::launch::async, this_loc, c_type, num);
+//                     f = p.get_future();
+//                 }
+// 
+// 
+//                 res.first = num;
+//                 res.second.back().gids_ = boost::move(f.get());
+// 
+//                 antibodies_.reserve(num);
+// 
+//                 std::vector<hpx::util::locality_result> res2;
+//                 BOOST_FOREACH(hpx::util::remote_locality_result const& r1, res.second)
+//                 {
+//                     res2.push_back(r1);
+//                 }
+// 
+//                 BOOST_FOREACH(hpx::id_type id, hpx::util::locality_results(res2))
+//                 {
+//                     antibodies_.push_back(id);
+//                 }
 
             }
 

@@ -6,18 +6,10 @@
 
 #include <hpx/hpx.hpp>
 #include <hpx/hpx_fwd.hpp>
-#include <hpx/include/components.hpp>
-//#include <hpx/runtime/components/server/managed_component_base.hpp>
-#include <hpx/runtime/actions/component_action.hpp>
-
+#include <hpx/include/iostreams.hpp>
 #include <hpx/components/distributing_factory/distributing_factory.hpp>
 
-
-
-#include <immune_system/immune_system/server/antibodies.hpp>
 #include <immune_system/immune_system/server/antibodies_factory.hpp>
-//#include <immune_system/immune_system/antibodies_factory.hpp>
-
 
 inline std::pair<std::size_t, std::vector<hpx::util::remote_locality_result> >
 distribute_ab_factory(std::vector<hpx::id_type> localities
@@ -171,7 +163,7 @@ inline std::vector<hpx::id_type> create_ab_factory(
     std::vector<hpx::future<void> > resolve_names_fut;
     resolve_names_fut.reserve(num_ab_factories);
 
-    typedef components::server::antibodies_factory::spawn_antibodies_action spawn_action;
+    typedef immune_system::server::antibodies_factory::spawn_antibodies_action spawn_action;
 
     //typedef components::antibodies_factory::init_abf_action action_type2;
     //typedef components::antibodies_factory::spawn_antibody_action action_type3;
