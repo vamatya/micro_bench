@@ -11,17 +11,18 @@ set(subdirs
 
 # for all targets specified above
 foreach(subdir ${subdirs})
+
   add_subdirectory(${subdir})
 
   set(sources
       ${subdir}_client.cpp)
 
   set(headers
-      ${subdir}/${subdir}.hpp
+      immune_system/${subdir}.hpp
       )
 
   source_group("Source Files" FILES ${sources})
-  source_group("Header Files\\Immune_system" FILES ${headers})
+  source_group("Header Files" FILES ${headers})
 
   set(components
       #${subdir}
@@ -33,18 +34,19 @@ foreach(subdir ${subdirs})
   add_hpx_executable(${subdir}_client
     SOURCES ${sources}
     HEADERS ${headers}
-    DEPENDENCIES immune_system/${components}_components
+    DEPENDENCIES ${components}_component
     FOLDER "Micro_bench/Immune_system")
 
   # add a custom target for this example
   add_hpx_pseudo_target(micro_bench.immune_system.${subdir})
 
   # make pseudo-targets depend on master pseudo-target
-  add_hpx_pseudo_dependencies(micro_bench.immune_system.immune_system
-                              micro_bench.immune_system.immune_system${subdir})
+  add_hpx_pseudo_dependencies(micro_bench.immune_system
+                              micro_bench.immune_system.${subdir})
 
   # add dependencies to pseudo-target
-  add_hpx_pseudo_dependencies(micro_bench.immune_system.immune_system${subdir}
+  add_hpx_pseudo_dependencies(micro_bench.immune_system.${subdir}
+  #add_hpx_pseudo_dependencies(micro_bench.immune_system.antibodies_factory
                               ${subdir}_exe)
 endforeach()
 

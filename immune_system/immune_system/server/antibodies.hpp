@@ -28,11 +28,11 @@ namespace components {
             // If the alien already has all the contact points filled, 
             // contact ab_factory for possible new target, or (self destroy??)
             // or get terminated??
-            antibodies(){};
+            antibodies();
 
             // Explicitly destroy superfluous antibodies. 
             // Done by the antibodies_factory. 
-            ~antibodies(){};
+            ~antibodies();
 
             // look for target as soon as antibody is created.
             antibodies(hpx::id_type target, hpx::id_type my_id)
@@ -52,11 +52,32 @@ namespace components {
                 }
             }
 
-            bool alien_connect(hpx::id_type target);
+            bool alien_connect(hpx::id_type target)
+            {
+                // update target. 
+                target_ = target;
+                //typedef components::aliens::ab_connect_action action_type;
+                //hpx::future<bool> connect = hpx::async<action_type>(target);
+                //TEST CODE, remove later
+                //typedef components::alien_factory::spawn_action action_type2;
+                //typedef components::antibodies_factory::spawn_antibodies_action action_type3;
+
+                //typedef ::components::alien_factory::spawn_action act_type;
+
+                //////////////////////////////////////////////////////////////
+
+                return true;
+            }
 
             HPX_DEFINE_COMPONENT_ACTION(antibodies, alien_connect);
 
-            bool send_spawn_signal();
+            bool send_spawn_signal()
+            {
+                //typedef ::components::antibodies_factory::spawn_antibodies_action
+                //    act_type;
+                //typedef ::components::alien_factory::spawn_action act_type2;
+                return true;
+            }
 
         private:
             hpx::id_type my_id_;
