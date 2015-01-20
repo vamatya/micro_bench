@@ -160,28 +160,28 @@ inline std::vector<hpx::id_type> create_ab_factory(
     }
     hpx::wait_all(init_futures);
 
-    std::vector<hpx::future<void> > resolve_names_fut;
+    std::vector<hpx::future<void> > resolve_names_fut, spawn_future;
     resolve_names_fut.reserve(num_ab_factories);
+    spawn_future.reserve(num_ab_factories);
+    
+    
+    typedef immune_system::server::antibodies_factory::spawn_antibodies_action 
+        spawn_action;
 
-    typedef immune_system::server::antibodies_factory::spawn_antibodies_action spawn_action;
-
-    //typedef components::antibodies_factory::init_abf_action action_type2;
-    //typedef components::antibodies_factory::spawn_antibody_action action_type3;
-    //typedef components::antibodies_factory::alien_factory_active_action action_type4;
-
-    hpx::future<void> result_fut = hpx::async<spawn_action>(
-        ab_factories[0], num_antibodies);
-
-    result_fut.get();
-    /*    BOOST_FOREACH(hpx::id_type const& id, ab_factories)
+    std::size_t rank = 0;
+    BOOST_FOREACH(hpx::id_type const& id, ab_factories)
     {
-    resolve_names_fut.push_back(
-    hpx::async<typename AntiBodyFactory::resolve_names_action>(
-    id,ab_factories));
+        resolve_names_fut.push_back(
+            hpx::async<typename AntiBodyFactory::resolve_names_action>(
+                id,ab_factories, rank));
+        ++rank;
+        spawn_future.push_back(hpx::async<spawn_action>(
+            id, num_antibodies));
     }
 
-    hpx::wait_all(resolve_names_futures);
-    */
+    hpx::wait_all(resolve_names_fut);
+    hpx::wait_all(spawn_future);
+
     return ab_factories;
 }
 

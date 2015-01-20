@@ -46,9 +46,10 @@ namespace immune_system{
 
             //////////////////////////////////////////////////////////////////////////
 
-            void resolve_names(std::vector<hpx::id_type> ids)
+            void resolve_names(std::vector<hpx::id_type> ids, std::size_t rank)
             {
                 fac_ids_ = ids;
+                my_rank_ = rank;
             }
 
             HPX_DEFINE_COMPONENT_ACTION(antibodies_factory, resolve_names);
@@ -164,6 +165,7 @@ namespace immune_system{
             hpx::id_type my_id_;
             hpx::id_type al_factory_;
             std::size_t produced_count;
+            std::size_t my_rank_;
 
             std::vector<hpx::id_type> fac_ids_;
             std::vector<hpx::id_type> antibodies_;
