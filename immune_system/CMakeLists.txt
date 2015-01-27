@@ -7,7 +7,9 @@
 
 # just recurse into all components subdirectories and execute the scripts there
 set(subdirs
-    immune_system)
+    immune_system
+    immune_system_simple
+    )
 
 # for all targets specified above
 foreach(subdir ${subdirs})

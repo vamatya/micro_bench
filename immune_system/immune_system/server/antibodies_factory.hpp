@@ -89,14 +89,11 @@ namespace immune_system{
 
             // look for identified aliens and target them. 
             // distributing factory method call components. 
-            void spawn_antibody()
-            {
-
-            }
+            //void spawn_antibody()
             //{
             //typedef ::components::alien_factory::spawn_action action_type;
             //} 
-            HPX_DEFINE_COMPONENT_ACTION(antibodies_factory, spawn_antibody);
+            //HPX_DEFINE_COMPONENT_ACTION(antibodies_factory, spawn_antibody);
 
             //Spawn \N Antibodies
             void spawn_antibodies(std::size_t num)
@@ -128,7 +125,6 @@ namespace immune_system{
                     f = p.get_future();
                 }
 
-
                 res.first = num;
                 res.second.push_back(
                     value_type(this_loc.get_gid(), c_type));
@@ -155,12 +151,45 @@ namespace immune_system{
             {}*/
 
             //Delete Superfluous antibodies
-            void kill_antibodies()
+            void kill_antibodies(std::vector<hpx::id_type> abs)
+            {
+                BOOST_FOREACH(hpx::id_type id, abs)
+                {
+                    std::size_t count = 0;
+                    bool found = false;
+                    //std::size_t 
+                    BOOST_FOREACH(hpx::id_type id_fac, antibodies_)
+                    {
+                        if (id_fac == id)
+                        {
+                            found = true;
+                            break;
+                        }
+                        ++count;
+                    }
+
+                    if (found)
+                    {
+                        antibodies_.erase(count);
+                    }
+                }
+            }
+
+            HPX_DEFINE_COMPONENT_ACTION(antibodies_factory, kill_antibodies);
+
+            void kill_antibody(hpx::id_type ab)
             {
             }
             //spawn_fb??
 
             //Antibodies Create Credit?
+            void print_stat()
+            {
+                std::cout << "My Rank:" << my_rank_ << std::endl;
+                std::cout << "Total Antibodies Created:" << antibodies_.size() << std::endl;
+            }
+
+            HPX_DEFINE_COMPONENT_ACTION(antibodies_factory, print_stat_action);
         private:
             hpx::id_type my_id_;
             hpx::id_type al_factory_;
@@ -181,9 +210,9 @@ HPX_REGISTER_ACTION_DECLARATION(abf_type::init_abf_action,
     abf_init_abf_action
     );
 
-HPX_REGISTER_ACTION_DECLARATION(abf_type::spawn_antibody_action,
-    abf_spawn_antibody_action
-    );
+//HPX_REGISTER_ACTION_DECLARATION(abf_type::spawn_antibody_action,
+//    abf_spawn_antibody_action
+//    );
 
 HPX_REGISTER_ACTION_DECLARATION(abf_type::spawn_antibodies_action,
     abf_spawn_antibodies_action
@@ -193,6 +222,12 @@ HPX_REGISTER_ACTION_DECLARATION(abf_type::alien_factory_active_action,
     abf_alien_factory_active_action
     );
 
+HPX_REGISTER_ACTION_DECLARATION(abf_type::print_stat_action,
+    abf_print_stat_action
+    );
 
+HPX_REGISTER_ACTION_DECLARATION(abf_type::kill_antibodies_action,
+    abf_kill_antibodies_action
+    );
 
 #endif //IMMUNE_SYSTEM_ANTIBODIES_FACTORY_HPP
