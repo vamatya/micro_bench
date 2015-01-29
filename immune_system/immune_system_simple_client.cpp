@@ -1,4 +1,3 @@
-
 //  Copyright (c) 2015 Vinay C Amatya
 //
 //  Distributed under the Boost Software License, Version 1.0. (See accompanying
@@ -8,9 +7,8 @@
 #include <hpx/hpx.hpp>
 #include <hpx/hpx_fwd.hpp>
 
-//#include <immune_system/immune_system/antibodies.hpp>
+#include <immune_system/immune_system_simple/server/antibodies_factory.hpp>
 #include <immune_system/immune_system_simple/immune_system.hpp>
-//#include <immune_system/immune_system/foreign_bodies.hpp>
 
 
 
@@ -19,8 +17,20 @@ int hpx_main(boost::program_options::variables_map & vm)
     std::vector<hpx::id_type> ab_fac =
         create_ab_factory<immune_system::server::antibodies_factory>(vm);
 
-    //std::vector<hpx::id_type> aln_fac =
-        //create_alien_factory<components::alien_factory>(vm,ab_fac);
+    typedef immune_system::server::antibodies_factory::print_stat_action action_type;
+
+    std::vector<hpx::future<void> > stats_fut;
+    BOOST_FOREACH(hpx::id_type id, ab_fac)
+    {
+        stats_fut.push_back(hpx::async<action_type>(id));
+    }
+
+    hpx::wait_all(stats_fut);
+
+    BOOST_FOREACH(hpx::future<void>& fut, stats_fut)
+    {
+        fut.get();
+    }
 
     return hpx::finalize();
 }
@@ -28,14 +38,9 @@ int hpx_main(boost::program_options::variables_map & vm)
 int main(int argc, char* argv[])
 {
     boost::program_options::options_description desc(
-        "Usage: " HPX_APPLICATION_STRING " [options]");// = params_desc();
+        "Usage: " HPX_APPLICATION_STRING " [options]");
 
     desc.add_options()
-        //(
-        //    "aliens-num"
-        //  , boost::program_options::value<std::size_t>()->default_value(1000)
-        //  , "Number of Aliens to be created"
-        //)
         (
             "ab-num"
           , boost::program_options::value<std::size_t>()->default_value(100)

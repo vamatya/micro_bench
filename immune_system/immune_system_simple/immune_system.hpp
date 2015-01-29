@@ -1,8 +1,11 @@
+//  Copyright (c) 2015 Vinay C Amatya
+//
+//  Distributed under the Boost Software License, Version 1.0. (See accompanying
+//  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
 
-
-#ifndef IMMUNE_SYSTEM_HPP
-#define IMMUNE_SYSTEM_HPP
+#ifndef IMMUNE_SYSTEM_SIMPLE_HPP
+#define IMMUNE_SYSTEM_SIMPLE_HPP
 
 #include <hpx/hpx.hpp>
 #include <hpx/hpx_fwd.hpp>
@@ -154,8 +157,6 @@ inline std::vector<hpx::id_type> create_ab_factory(
 
     BOOST_FOREACH(hpx::id_type id, hpx::util::locality_results(res))
     {
-        /*init_futures.push_back(
-        hpx::async<typename AntiBodyFactory::init_abf_action>(id));*/
         ab_factories.push_back(id);
     }
     hpx::wait_all(init_futures);
@@ -185,8 +186,6 @@ inline std::vector<hpx::id_type> create_ab_factory(
     return ab_factories;
 }
 
-
-
-#endif // IMMUNE_SYSTEM_HPP
+#endif // IMMUNE_SYSTEM_SIMPLE_HPP
 
 

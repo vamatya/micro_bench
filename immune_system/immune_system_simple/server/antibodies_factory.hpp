@@ -4,8 +4,8 @@
 //  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
 
-#ifndef IMMUNE_SYSTEM_SERVER_ANTIBODIES_FACTORY_HPP
-#define IMMUNE_SYSTEM_SERVER_ANTIBODIES_FACTORY_HPP
+#ifndef IMMUNE_SYSTEM_SIMPLE_SERVER_ANTIBODIES_FACTORY_HPP
+#define IMMUNE_SYSTEM_SIMPLE_SERVER_ANTIBODIES_FACTORY_HPP
 
 #include <hpx/hpx_fwd.hpp>
 #include <hpx/include/components.hpp>
@@ -30,8 +30,6 @@ namespace immune_system{
 
             //Note: For now maintain list of all spawned antibodies. 
 
-            //TO DO: create another header file.
-
             antibodies_factory(){}
 
             antibodies_factory(hpx::id_type my_id)
@@ -54,34 +52,7 @@ namespace immune_system{
 
             HPX_DEFINE_COMPONENT_ACTION(antibodies_factory, resolve_names);
 
-            //Sense foreign body
-            // Identify each alien body, and get the no. of antibodies it has 
-            // in contact. 
-            // alien_factory notifies its location/id
-            bool alien_factory_active()
-            {
-                return false;
-            }
-
-            HPX_DEFINE_COMPONENT_ACTION(antibodies_factory, alien_factory_active);
-
-            bool get_alien_factory(hpx::id_type al_factory)
-            {
-                al_factory_ = al_factory;
-                return true;
-            }
-            //{
-            //    al_factory_ = al_factory;
-            //    return true;
-            //}
-            // Look into the stack of alien_factory for any aliens present. 
-            // tuple of id and filled/not flag??
-
-            bool scan_aliens()
-            {
-                return false;
-            }
-
+                      
             //Spawn \N Antibodies
             void spawn_antibodies(std::size_t num)
             {
@@ -133,41 +104,7 @@ namespace immune_system{
             }
 
             HPX_DEFINE_COMPONENT_ACTION(antibodies_factory, spawn_antibodies);
-
-            /*std::tuple<bool, hpx::id_type> get_target(hpx::id_type antibody)
-            {}*/
-
-            //Delete Superfluous antibodies
-            void kill_antibodies(std::vector<hpx::id_type> abs)
-            {
-                BOOST_FOREACH(hpx::id_type id, abs)
-                {
-                    std::size_t count = 0;
-                    bool found = false;
-                    //std::size_t 
-                    BOOST_FOREACH(hpx::id_type id_fac, antibodies_)
-                    {
-                        if (id_fac == id)
-                        {
-                            found = true;
-                            break;
-                        }
-                        ++count;
-                    }
-
-                    if (found)
-                    {
-                        antibodies_.erase(antibodies_.begin() + count);
-                    }
-                }
-            }
-
-            HPX_DEFINE_COMPONENT_ACTION(antibodies_factory, kill_antibodies);
-
-            void kill_antibody(hpx::id_type ab)
-            {
-            }
-            
+                                   
             void print_stat()
             {
                 std::cout << "My Rank:" << my_rank_ << std::endl;
@@ -195,24 +132,13 @@ HPX_REGISTER_ACTION_DECLARATION(abf_type::init_abf_action,
     abf_init_abf_action
     );
 
-//HPX_REGISTER_ACTION_DECLARATION(abf_type::spawn_antibody_action,
-//    abf_spawn_antibody_action
-//    );
-
 HPX_REGISTER_ACTION_DECLARATION(abf_type::spawn_antibodies_action,
     abf_spawn_antibodies_action
     );
 
-HPX_REGISTER_ACTION_DECLARATION(abf_type::alien_factory_active_action,
-    abf_alien_factory_active_action
-    );
 
 HPX_REGISTER_ACTION_DECLARATION(abf_type::print_stat_action,
     abf_print_stat_action
     );
 
-HPX_REGISTER_ACTION_DECLARATION(abf_type::kill_antibodies_action,
-    abf_kill_antibodies_action
-    );
-
-#endif //IMMUNE_SYSTEM_ANTIBODIES_FACTORY_HPP
+#endif //IMMUNE_SYSTEM_SIMPLE_ANTIBODIES_FACTORY_HPP

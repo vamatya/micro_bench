@@ -23,6 +23,3 @@ HPX_REGISTER_MINIMAL_COMPONENT_FACTORY(
 
 //////////////////////////////////////////////////////////
 
-HPX_REGISTER_ACTION(antibodies_type::alien_connect_action
-    , antibodies_alien_connect_action);
-

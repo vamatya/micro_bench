@@ -4,8 +4,8 @@
 //  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
 
-#ifndef IMMUNE_SYSTEM_SERVER_ANTIBODIES_HPP
-#define IMMUNE_SYSTEM_SERVER_ANTIBODIES_HPP
+#ifndef IMMUNE_SYSTEM_SIMPLE_SERVER_ANTIBODIES_HPP
+#define IMMUNE_SYSTEM_SIMPLE_SERVER_ANTIBODIES_HPP
 
 #include <hpx/hpx_fwd.hpp>
 #include <hpx/include/components.hpp>
@@ -48,10 +48,5 @@ namespace immune_system {
 }
 
 //////////////////////////////////////////////////////////////////
-
-HPX_REGISTER_ACTION_DECLARATION(
-    immune_system::server::antibodies::alien_connect_action
-    , antibodies_alien_connect_action
-    )
 
 #endif //IMMUNE_SYSTEM_SERVER_ANTIBODIES_HPP
