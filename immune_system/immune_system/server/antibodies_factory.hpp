@@ -170,7 +170,7 @@ namespace immune_system{
 
                     if (found)
                     {
-                        antibodies_.erase(count);
+                        antibodies_.erase(antibodies_.begin()+count);
                     }
                 }
             }
@@ -189,7 +189,7 @@ namespace immune_system{
                 std::cout << "Total Antibodies Created:" << antibodies_.size() << std::endl;
             }
 
-            HPX_DEFINE_COMPONENT_ACTION(antibodies_factory, print_stat_action);
+            HPX_DEFINE_COMPONENT_ACTION(antibodies_factory, print_stat);
         private:
             hpx::id_type my_id_;
             hpx::id_type al_factory_;

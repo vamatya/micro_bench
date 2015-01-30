@@ -8,14 +8,16 @@
 
 set(server_sources
     server/antibodies_factory.cpp
-    #server/foreign_bodies_factory.cpp
-    #server/foreign_bodies.cpp
+    server/foreign_bodies_factory.cpp
+    server/foreign_bodies.cpp
     server/antibodies.cpp
     )
 
 set(server_headers
     server/antibodies_factory.hpp
     server/antibodies.hpp
+    server/foreign_bodies_factory.hpp
+    server/foreign_bodies.hpp
     )
 
 set(source_files
@@ -24,6 +26,7 @@ set(source_files
 
 set(header_files
     immune_system.hpp
+    foreign_bodies.hpp
    ) 
 
 ###############################################################################
