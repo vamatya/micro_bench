@@ -1,37 +1,22 @@
-
-
+//  Copyright (c) 2015 Vinay C Amatya
+//
+//  Distributed under the Boost Software License, Version 1.0. (See accompanying
+//  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
 
 #include "foreign_bodies_factory.hpp"
 
 
-void components::alien_factory::init()
-{
-
-}
-
-void components::alien_factory::spawn()
-{
-
-}
-
-void components::alien_factory::spawn_n_aliens(std::size_t num)
-{
-
-}
-
-
-/*HPX_REGISTER_COMPONENT_MODULE();
-
-typedef ::components::alien_factory alien_factory_type;
+typedef immune_system::server::alien_factory af_type;
 
 HPX_REGISTER_MINIMAL_COMPONENT_FACTORY(
-    hpx::components::managed_component<alien_factory_type>, alien_alien_factory_type);
+    hpx::components::managed_component<af_type>
+    , alien_factory_af_type);
 
+////////////////////////////////////////////////////////////
 
-HPX_REGISTER_ACTION(alien_factory_type::spawn_action
+HPX_REGISTER_ACTION(af_type::spawn_aliens_action
     , alien_factory_spawn_action);
 
-HPX_REGISTER_ACTION(alien_factory_type::spawn_n_aliens_action
+HPX_REGISTER_ACTION(af_type::spawn_n_aliens_action
     , alien_factory_spawn_n_aliens_action);
-*/

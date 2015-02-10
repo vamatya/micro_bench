@@ -77,18 +77,32 @@ namespace immune_system
 
             HPX_DEFINE_COMPONENT_ACTION(aliens, alien_active);
 
-
             //////////////////////////////////////////////////
+            
+
+            // Single Server Factory Model.
+            // If there are already foreign objects attached
+            // Upto
             std::size_t send_spawn_signal()
             {
                 //typedef ::components::alien_factory::spawn_action act_type;
                 //typedef ::components::antibodies_factory::spawn_antibodies_action
                 //act_type2;
                 //typedef ::components::antibodies::alien_connect_action act_type3;
+                return 0;
 
             }
             HPX_DEFINE_COMPONENT_ACTION(aliens, send_spawn_signal);
 
+            // Each alien (bacteria) reproduces asexually by cell division
+//             hpx::id_type fission()
+//             {
+//                 
+// 
+//                 return ;
+//             }
+
+//            HPX_DEFINE_COMPONENT_ACTION(aliens, fission);
         private:
             hpx::id_type my_id_;
             std::vector<hpx::id_type> ab_contact_;
@@ -98,19 +112,15 @@ namespace immune_system
 }
 //////////////////////////////////////////////////////////////////
 
-HPX_REGISTER_ACTION_DECLARATION(
-    ::components::aliens::ab_connect_action,
-    aliens_ab_connect_action
-    );
+typedef immune_system::server::aliens aliens_type;
 
-HPX_REGISTER_ACTION_DECLARATION(
-    ::components::aliens::alien_active_action,
-    aliens_alien_active_action
-        );
+HPX_REGISTER_ACTION_DECLARATION(aliens_type::ab_connect_action
+    , aliens_ab_connect_action);
 
-HPX_REGISTER_ACTION_DECLARATION(
-    ::components::aliens::send_spawn_signal_action,
-    aliens_send_spawn_signal_action
-        );
+HPX_REGISTER_ACTION_DECLARATION(aliens_type::alien_active_action
+    , aliens_alien_active_action);
+
+HPX_REGISTER_ACTION_DECLARATION(aliens_type::send_spawn_signal_action
+    , aliens_send_spawn_signal_action);
 
 #endif //IMMUNE_SYSTEM_FOREIGN_BODIES_HPP

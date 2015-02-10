@@ -30,69 +30,97 @@ namespace immune_system {
             // Based on the feedback from initial alien created, generate 
             // more aliens. 
 
-            void init();
-            //{}
+            void init()
+            {
+
+            }
+            
             HPX_DEFINE_COMPONENT_ACTION(alien_factory, init);
 
 
-            void spawn();
-            //{
-            /*
-            hpx::components::component_type c_type =
-            hpx::components::get_component_type<components::aliens>();
+            void spawn_aliens()
 
-            hpx::id_type this_locality = hpx::find_here(); //??
-
-            using hpx::components::distributing_factory;
-
-            typedef
-            hpx::components::server::runtime_support::bulk_create_components_action
-            action_type;
-
-            typedef hpx::future<std::vector<hpx::naming::gid_type> > future_type;
-
-            if(this_locality)
             {
-            future_type f;
+            }
+//             {
+//             hpx::components::component_type c_type =
+//             hpx::components::get_component_type<components::aliens>();
+// 
+//             hpx::id_type this_locality = hpx::find_here(); //??
+// 
+//             using hpx::components::distributing_factory;
+// 
+//             typedef
+//             hpx::components::server::runtime_support::bulk_create_components_action
+//             action_type;
+// 
+//             typedef hpx::future<std::vector<hpx::naming::gid_type> > future_type;
+// 
+//             if(this_locality)
+//             {
+//             future_type f;
+//             {
+//             hpx::lcos::packaged_action<action_type
+//             , std::vector<hpx::naming::gid_type> > p;
+//             p.apply(hpx::launch::async, this_locality, c_type, 1);
+//             f = p.get_future();
+//             }
+//             ////converting gid_type to id_type??
+//             //aliens_.push_back(f.get());
+//             }
+// 
+//             //typedef ::components::aliens::ab_connect_action act_type;
+// 
+//             }
+
+            HPX_DEFINE_COMPONENT_ACTION(alien_factory, spawn_aliens);
+
+            void spawn_n_aliens(std::size_t num)
             {
-            hpx::lcos::packaged_action<action_type
-            , std::vector<hpx::naming::gid_type> > p;
-            p.apply(hpx::launch::async, this_locality, c_type, 1);
-            f = p.get_future();
+                hpx::components::component_type c_type =
+                    hpx::components::get_component_type<components::aliens>();
+                hpx::id_type this_locality = hpx::find_here();
+                using hpx::components::distributing_factory;
+
+                typedef
+                hpx::components::server::runtime_support::bulk_create_components_action
+                action_type;
+
+                typedef hpx::future<std::vector<hpx::naming::gid_type> > future_type;
+
+                future_type f;
+                {
+                    hpx::lcos::packaged_action<action_type
+                        , std::vector<hpx::naming::gid_type> > p;
+                    p.apply(hpx::launch::async, this_locality, c_type, num);
+                    f = p.get_future();
+                }
+                aliens_.push_back(f.get());
             }
-            ////converting gid_type to id_type??
-            //aliens_.push_back(f.get());
-            }
-
-            */
-            //typedef ::components::aliens::ab_connect_action act_type;
-
-            //}
-            HPX_DEFINE_COMPONENT_ACTION(alien_factory, spawn);
-
-            void spawn_n_aliens(std::size_t num);
-            //{
-            //}
 
             HPX_DEFINE_COMPONENT_ACTION(alien_factory, spawn_n_aliens);
+
+
+            // Static Growth Function for now. 
+            std::size_t growth_function()
+            {
+
+            }
 
             // Aliens Create Credit?
         private:
             std::vector<hpx::id_type> aliens_;
         };
-
     }
 }
 //////////////////////////////////////////////////////////////////
 
-HPX_REGISTER_ACTION_DECLARATION(
-    ::components::alien_factory::spawn_action,
-    alien_factory_spawn_action
-    );
+typedef immune_system::server::alien_factory af_type;
 
-HPX_REGISTER_ACTION_DECLARATION(
-    ::components::alien_factory::spawn_n_aliens_action,
-    alien_factory_spawn_n_aliens_action
-    );
+HPX_REGISTER_ACTION_DECLARATION(af_type::spawn_aliens_action
+    , alien_factory_spawn_action);
+
+HPX_REGISTER_ACTION_DECLARATION(af_type::spawn_n_aliens_action
+    , alien_factory_spawn_n_aliens_action);
 
 #endif //IMMUNE_SYSTEM_FOREIGN_BODIES_FACTORY_HPP

@@ -84,6 +84,7 @@ namespace immune_system {
             hpx::id_type target_;
             bool target_attached;
 
+            std::size_t origin_loc_id_;
             std::size_t gen_id;
             std::size_t fb_contact_count;
 
