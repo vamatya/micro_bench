@@ -37,8 +37,8 @@ namespace immune_system
             aliens(){};
             ~aliens(){};
 
-            aliens(hpx::id_type my_id)
-                :my_id_(my_id)
+            aliens(hpx::id_type my_id, hpx::util::high_resolution_timer t)
+                :my_id_(my_id), t_(t)
             {
 
             }
@@ -94,11 +94,9 @@ namespace immune_system
             }
             HPX_DEFINE_COMPONENT_ACTION(aliens, send_spawn_signal);
 
-            // Each alien (bacteria) reproduces asexually by cell division
+            // Each alien (bacteria) reproduces by cell division
 //             hpx::id_type fission()
 //             {
-//                 
-// 
 //                 return ;
 //             }
 
@@ -106,6 +104,7 @@ namespace immune_system
         private:
             hpx::id_type my_id_;
             std::vector<hpx::id_type> ab_contact_;
+            const hpx::util::high_resolution_timer t_;
         };
 
     }
