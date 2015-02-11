@@ -10,7 +10,7 @@
 #include <hpx/include/components.hpp>
 #include <hpx/runtime/actions/component_action.hpp>
 
-#include <immune_system/immune_system/server/foreign_bodies_factory.hpp>
+//#include <immune_system/immune_system/server/foreign_bodies_factory.hpp>
 //#include <immune_system/immune_system/server/antibodies_factory.hpp>
 //#include <immune_system/server/antibodies.hpp>
 

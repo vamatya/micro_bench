@@ -12,7 +12,8 @@
 #include <hpx/runtime/actions/component_action.hpp>
 
 
-#include <immune_system/immune_system/server/foreign_bodies.hpp>
+//#include <immune_system/immune_system/server/foreign_bodies.hpp>
+#include "foreign_bodies.hpp"
 #include <immune_system/immune_system/server/antibodies_factory.hpp>
 
 #include <cmath>
@@ -93,6 +94,11 @@ namespace immune_system {
 
             void spawn_n_aliens(std::size_t num)
             {
+                typedef hpx::util::remote_locality_result value_type;
+                typedef std::pair<std::size_t, std::vector<value_type> > result_type;
+
+                result_type res;
+
                 hpx::components::component_type c_type =
                     hpx::components::get_component_type<immune_system::server::aliens>();
                 hpx::id_type this_locality = hpx::find_here();
@@ -111,7 +117,26 @@ namespace immune_system {
                     p.apply(hpx::launch::async, this_locality, c_type, num);
                     f = p.get_future();
                 }
-                aliens_.push_back(f.get());
+
+                res.first = num;
+                res.second.push_back(
+                    value_type(this_locality.get_gid(), c_type));
+                res.second.back().gids_ = boost::move(f.get());
+
+                //id_vector_type comps;
+
+                //comps.reserve(num);
+
+                std::vector<hpx::util::locality_result> res2;
+                BOOST_FOREACH(hpx::util::remote_locality_result const& r1, res.second)
+                {
+                    res2.push_back(r1);
+                }
+
+                BOOST_FOREACH(hpx::id_type id, hpx::util::locality_results(res2))
+                {
+                    aliens_.push_back(id);
+                }
             }
 
             HPX_DEFINE_COMPONENT_ACTION(alien_factory, spawn_n_aliens);
