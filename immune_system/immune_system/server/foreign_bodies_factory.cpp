@@ -10,13 +10,16 @@
 typedef immune_system::server::alien_factory af_type;
 
 HPX_REGISTER_MINIMAL_COMPONENT_FACTORY(
-    hpx::components::managed_component<af_type>
+    hpx::components::simple_component<af_type>
     , alien_factory_af_type);
 
 ////////////////////////////////////////////////////////////
 
-HPX_REGISTER_ACTION(af_type::spawn_aliens_action
-    , alien_factory_spawn_action);
+// HPX_REGISTER_ACTION(af_type::spawn_aliens_action
+//     , alien_factory_spawn_action);
 
 HPX_REGISTER_ACTION(af_type::spawn_n_aliens_action
     , alien_factory_spawn_n_aliens_action);
+
+HPX_REGISTER_ACTION(af_type::alien_connect_action
+    , alien_factory_alien_connect_action);

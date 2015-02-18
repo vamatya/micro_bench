@@ -21,9 +21,10 @@ namespace immune_system
 {
     namespace server
     {
-        
+        struct aliens_factory; 
+
         struct aliens
-            : hpx::components::managed_component_base < aliens >
+            : hpx::components::simple_component_base<aliens>
         {
             // send signal to alien_factory to create aliens
             // if no antibodies contact 7*spawn_rate; 
@@ -37,29 +38,21 @@ namespace immune_system
             aliens(){};
             ~aliens(){};
 
-            aliens(hpx::id_type my_id, hpx::util::high_resolution_timer t)
-                :my_id_(my_id), t_(t)
+            aliens(hpx::id_type my_id)
+                :my_id_(my_id)
+                , t_(hpx::util::high_resolution_timer::high_resolution_timer())
             {
-
             }
 
             bool ab_connect(hpx::id_type antibody)
-            {
-                if (antibody)
-                {
-                    if (ab_contact_.size() < 7)
-                    {
-                        ab_contact_.push_back(antibody);
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
+            {               
+                hpx::id_type invalid_type;
+                if (ab_ != invalid_type)
+                    return false;
                 else
                 {
-                    return false;
+                    ab_ = antibody;
+                    return true;
                 }
             }
 
@@ -67,11 +60,19 @@ namespace immune_system
 
             ///////////////////////////////////////////////////
 
+            bool ab_attached()
+            {
+                hpx::id_type invalid_type;
+                if (ab_ != invalid_type)
+                    return true;
+                else
+                    return false;
+            }
+
+            ///////////////////////////////////////////////////
+
             bool alien_active()
             {
-                //typedef ::components::alien_factory::spawn_action act_type;
-                //typedef ::components::antibodies_factory::spawn_antibodies_action act_type2;
-
                 return true;
             }
 
@@ -82,15 +83,9 @@ namespace immune_system
 
             // Single Server Factory Model.
             // If there are already foreign objects attached
-            // Upto
             std::size_t send_spawn_signal()
             {
-                //typedef ::components::alien_factory::spawn_action act_type;
-                //typedef ::components::antibodies_factory::spawn_antibodies_action
-                //act_type2;
-                //typedef ::components::antibodies::alien_connect_action act_type3;
                 return 0;
-
             }
             HPX_DEFINE_COMPONENT_ACTION(aliens, send_spawn_signal);
 
@@ -103,8 +98,9 @@ namespace immune_system
 //            HPX_DEFINE_COMPONENT_ACTION(aliens, fission);
         private:
             hpx::id_type my_id_;
-            std::vector<hpx::id_type> ab_contact_;
-            const hpx::util::high_resolution_timer t_;
+            hpx::id_type ab_;
+            //std::vector<hpx::id_type> ab_contact_;
+            hpx::util::high_resolution_timer t_;
         };
 
     }

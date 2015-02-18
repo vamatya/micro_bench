@@ -19,7 +19,7 @@
 typedef immune_system::server::antibodies antibodies_type;
 
 HPX_REGISTER_MINIMAL_COMPONENT_FACTORY(
-    hpx::components::managed_component < antibodies_type >
+    hpx::components::simple_component < antibodies_type >
     , antibodies_component);
 
 //////////////////////////////////////////////////////////

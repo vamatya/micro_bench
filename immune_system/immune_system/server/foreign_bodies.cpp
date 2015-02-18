@@ -10,7 +10,7 @@
 typedef immune_system::server::aliens aliens_type;
 
 HPX_REGISTER_MINIMAL_COMPONENT_FACTORY(
-    hpx::components::managed_component < aliens_type >
+    hpx::components::simple_component < aliens_type >
     , aliens_aliens_type);
 
 

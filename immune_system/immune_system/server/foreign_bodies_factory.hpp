@@ -10,11 +10,12 @@
 #include <hpx/include/components.hpp>
 //#include <hpx/runtime/components/server/managed_component_base.hpp>
 #include <hpx/runtime/actions/component_action.hpp>
-
+#include <hpx/components/distributing_factory/distributing_factory.hpp>
 
 //#include <immune_system/immune_system/server/foreign_bodies.hpp>
 #include "foreign_bodies.hpp"
-#include <immune_system/immune_system/server/antibodies_factory.hpp>
+//#include <immune_system/immune_system/server/antibodies_factory.hpp>
+//#include "antibodies_factory.hpp"
 
 #include <cmath>
 #include <iostream>
@@ -26,8 +27,12 @@ namespace immune_system {
         // Foreign(Alien) Body Generating Factory. 
 
         struct alien_factory
-            : hpx::components::managed_component_base < alien_factory >
+            : hpx::components::simple_component_base<alien_factory>
         {
+
+            //typedef std::tuple<bool, hpx::id_type> tup_type;
+            typedef hpx::util::tuple<bool, hpx::id_type> tup_type;
+
             //Note: For now maintain list of all spawned aliens. 
 
             // Generate Aliens
@@ -54,43 +59,35 @@ namespace immune_system {
             
             HPX_DEFINE_COMPONENT_ACTION(alien_factory, init);
 
-
-            void spawn_aliens()
-
+            // Individual antibody contact AF
+            tup_type alien_connect(hpx::id_type ab_id)
             {
-            }
-//             {
-//             hpx::components::component_type c_type =
-//             hpx::components::get_component_type<components::aliens>();
-// 
-//             hpx::id_type this_locality = hpx::find_here(); //??
-// 
-//             using hpx::components::distributing_factory;
-// 
-//             typedef
-//             hpx::components::server::runtime_support::bulk_create_components_action
-//             action_type;
-// 
-//             typedef hpx::future<std::vector<hpx::naming::gid_type> > future_type;
-// 
-//             if(this_locality)
-//             {
-//             future_type f;
-//             {
-//             hpx::lcos::packaged_action<action_type
-//             , std::vector<hpx::naming::gid_type> > p;
-//             p.apply(hpx::launch::async, this_locality, c_type, 1);
-//             f = p.get_future();
-//             }
-//             ////converting gid_type to id_type??
-//             //aliens_.push_back(f.get());
-//             }
-// 
-//             //typedef ::components::aliens::ab_connect_action act_type;
-// 
-//             }
 
-            HPX_DEFINE_COMPONENT_ACTION(alien_factory, spawn_aliens);
+                typedef immune_system::server::aliens::ab_connect_action
+                    action_type;
+                hpx::id_type invalid_type;
+                tup_type temp = hpx::util::make_tuple(false, invalid_type);
+                //tup_type temp = std::make_tuple(false,invalid_type);
+
+                hpx::future<bool> res;
+
+                BOOST_FOREACH(tup_type t, aliens_)
+                {
+                    if ((hpx::util::get<0>(t) == false) && (ab_id != invalid_type))
+                    {
+                        hpx::util::get<0>(temp) = true;
+                        hpx::util::get<0>(t) = true;
+                        hpx::util::get<1>(temp) = hpx::util::get<1>(t);
+                        //res = 
+                            hpx::async<action_type>(
+                            hpx::util::get<1>(t), ab_id);
+                            antibodies_.push_back(ab_id);
+                    }
+                }
+                return temp;
+            }
+
+            HPX_DEFINE_COMPONENT_ACTION(alien_factory, alien_connect);
 
             void spawn_n_aliens(std::size_t num)
             {
@@ -135,7 +132,8 @@ namespace immune_system {
 
                 BOOST_FOREACH(hpx::id_type id, hpx::util::locality_results(res2))
                 {
-                    aliens_.push_back(id);
+                    tup_type temp = hpx::util::make_tuple(false, id);
+                    aliens_.push_back(temp);
                 }
             }
 
@@ -216,15 +214,30 @@ namespace immune_system {
             
             HPX_DEFINE_COMPONENT_ACTION(alien_factory, create_aliens);
             // Aliens Create Credit?
+
+//             template <typename Archive>
+//             void serialize(Archive&ar, unsigned version) {}
+
         private:
             std::size_t epsilon_;
             std::size_t max_aliens_;
             hpx::id_type my_id_;
             // tuple??
-            std::vector<hpx::id_type> aliens_;
+            tup_type tup_;
+            std::vector<tup_type> aliens_;
             std::vector<hpx::id_type> antibodies_;
             hpx::util::high_resolution_timer t_;
             std::tuple<bool, std::uint64_t> t_max_reached_;
+
+
+            friend class boost::serialization::access;
+            template<class Archive>
+            void serialize(Archive & ar, const unsigned int version){
+                ar & aliens_;
+                ar & tup_;
+                ar & t_;
+                ar & t_max_reached_;
+            }
             
         };
     }
@@ -233,10 +246,13 @@ namespace immune_system {
 
 typedef immune_system::server::alien_factory af_type;
 
-HPX_REGISTER_ACTION_DECLARATION(af_type::spawn_aliens_action
-    , alien_factory_spawn_action);
+// HPX_REGISTER_ACTION_DECLARATION(af_type::spawn_aliens_action
+//     , alien_factory_spawn_action);
 
 HPX_REGISTER_ACTION_DECLARATION(af_type::spawn_n_aliens_action
     , alien_factory_spawn_n_aliens_action);
+
+HPX_REGISTER_ACTION_DECLARATION(af_type::alien_connect_action
+    , alien_factory_alien_connect_action);
 
 #endif //IMMUNE_SYSTEM_FOREIGN_BODIES_FACTORY_HPP
