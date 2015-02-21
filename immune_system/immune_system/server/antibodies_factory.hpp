@@ -29,7 +29,7 @@ namespace immune_system{
         struct antibodies_factory
             : hpx::components::simple_component_base<antibodies_factory>
         {
-            typedef std::tuple<bool, hpx::id_type> tup_type;
+            typedef hpx::util::tuple<bool, hpx::id_type> tup_type;
             //Note: For now maintain list of all spawned antibodies. 
 
             //TO DO: create another header file.
@@ -147,7 +147,7 @@ namespace immune_system{
 
                 BOOST_FOREACH(hpx::id_type id, hpx::util::locality_results(res2))
                 {
-                    antibodies_.push_back(id);
+                    antibodies_.push_back(hpx::util::make_tuple(false, id));
                 }
 
             }
@@ -168,13 +168,13 @@ namespace immune_system{
 
                 hpx::id_type invalid_type;
 
-                typedef std::tuple<hpx::future<tup_type>, hpx::id_type> fut_tup_type;
+                //result, ab_id 
+                typedef hpx::util::tuple<hpx::future<bool>, hpx::id_type> fut_tup_type;
 
                 typedef std::vector<fut_tup_type> fut_vec_type;
                 
                 fut_vec_type fvec;
-                fut_vec_type::iterator itr_f = fvec.begin();
-
+                
                 fut_tup_type temp_tup;
 
                 typedef immune_system::server::antibodies::alien_connect_action
@@ -189,11 +189,23 @@ namespace immune_system{
 //                 }
                 BOOST_ASSERT(al_factory_ != invalid_type);
 
+//                 BOOST_FOREACH(tup_type tup, antibodies_)
+//                 {
+//                     hpx::util::get<0>(temp_tup) 
+//                         = hpx::async<action_type>(hpx::util::get<1>(tup), al_factory_);
+//                     hpx::util::get<1>(temp_tup) = hpx::util::get<1>(tup);
+//                     fvec.push_back(temp_tup);
+//                 }
+                std::vector<hpx::future<bool> > ret_vec;
                 BOOST_FOREACH(hpx::id_type id, antibodies_)
                 {
-//                     std::get<0>(temp_tup) 
-//                         = hpx::async<action_type>(id, al_factory_);
+                    ret_vec.push_back(
+                        hpx::async<action_type>(id, al_factory_));
                 }
+
+                hpx::wait_all(ret_vec);
+
+                //fut_vec_type::iterator itr_f = fvec.begin();
             }
             
             //Delete Superfluous antibodies
@@ -243,6 +255,7 @@ namespace immune_system{
             std::size_t my_rank_;
 
             std::vector<hpx::id_type> fac_ids_;
+            //std::vector<hpx::util::tuple<bool, hpx::id_type> > antibodies_;
             std::vector<hpx::id_type> antibodies_;
 
             std::size_t max_antibodies_;

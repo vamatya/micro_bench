@@ -49,11 +49,12 @@ namespace immune_system {
             antibodies(hpx::id_type my_id)
                 : my_id_(my_id)
                 , origin_loc_id_(hpx::find_here())
+                , alien_attached_(false)
             {}
 
             // look for target as soon as antibody is created.
             antibodies(hpx::id_type target, hpx::id_type my_id)
-                : target_attached(false)
+                : alien_attached_(false)
                 , target_factory_(target)
                 , my_id_(my_id)
                 , origin_loc_id_(hpx::find_here())
@@ -123,14 +124,13 @@ namespace immune_system {
                 else
                 {
                     target_alien_ = hpx::util::get<1>(res_pair);
+                    alien_attached_ = true;
                     return true;
                 }
             }
 
             HPX_DEFINE_COMPONENT_ACTION(antibodies, alien_connect);
 
-            
-            
 //             template <typename Archive>
 //             void serialize(Archive&ar, unsigned version) {}
 
@@ -140,7 +140,7 @@ namespace immune_system {
             hpx::id_type target_alien_;
 
             hpx::id_type origin_loc_id_;
-            bool target_attached;
+            bool alien_attached_;
 
             tup_type tup_;
 
@@ -165,6 +165,11 @@ namespace immune_system {
 HPX_REGISTER_ACTION_DECLARATION(
     immune_system::server::antibodies::alien_connect_action
     , antibodies_alien_connect_action
+    )
+
+HPX_REGISTER_ACTION_DECLARATION(
+    immune_system::server::antibodies::alien_connect_helper_action
+    , antibodies_alien_connect_helper_action
     )
 
 /*HPX_REGISTER_ACTION_DECLARATION(
