@@ -16,6 +16,7 @@ set(server_sources
 set(server_headers
     server/antibodies_factory.hpp
     server/antibodies.hpp
+    server/common_objects.hpp
     server/foreign_bodies_factory.hpp
     server/foreign_bodies.hpp
     )

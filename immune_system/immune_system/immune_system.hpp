@@ -168,8 +168,12 @@ inline std::vector<hpx::id_type> create_ab_factory(
     spawn_future.reserve(num_ab_factories);
     
     
-    typedef immune_system::server::antibodies_factory::spawn_antibodies_action 
+    typedef immune_system::server::antibodies_factory::spawn_n_antibodies_action 
         spawn_action;
+
+//     typedef typename AntiBodyFactory::spawn_n_antibodies_action <
+//         immune_system::server::antibodies
+//     > spawn_action;
 
     std::size_t rank = 0;
     BOOST_FOREACH(hpx::id_type const& id, ab_factories)
@@ -180,6 +184,10 @@ inline std::vector<hpx::id_type> create_ab_factory(
         ++rank;
         spawn_future.push_back(hpx::async<spawn_action>(
             id, num_antibodies));
+//         spawn_future.push_back(hpx::async <
+//             typename AntiBodyFactory::spawn_n_antibodies_action<
+//             immune_system::server::antibodies> >
+//             (id, num_antibodies));
     }
 
     hpx::wait_all(resolve_names_fut);

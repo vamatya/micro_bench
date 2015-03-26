@@ -14,6 +14,7 @@
 
 //#include <immune_system/server/antibodies_factory.hpp>
 //#include <immune_system/immune_system/server/foreign_bodies_factory.hpp>
+#include "common_objects.hpp"
 #include "foreign_bodies_factory.hpp"
 //#include "foreign_bodies.hpp"
 //#include "antibodies_factory.hpp"
@@ -31,11 +32,8 @@ namespace immune_system {
                 hpx::components::simple_component_base<antibodies>
             >
         {
-            //typedef std::tuple<bool, hpx::id_type> tup_type;
             typedef hpx::util::tuple<bool, hpx::id_type> tup_type;
 
-            
-            
             // Contact the Antibody targeted for, (error case). 
             // If the alien already has all the contact points filled, 
             // contact ab_factory for possible new target, or (self destroy??)
@@ -47,41 +45,21 @@ namespace immune_system {
             ~antibodies(){}
 
             antibodies(hpx::id_type my_id)
-                : my_id_(my_id)
-                , origin_loc_id_(hpx::find_here())
-                , alien_attached_(false)
-            {}
+                : origin_loc_id_(hpx::find_here())
+            {
+                body_.my_id = my_id;
+                body_.foreign_object_attached = false;
+            }
 
             // look for target as soon as antibody is created.
             antibodies(hpx::id_type target, hpx::id_type my_id)
-                : alien_attached_(false)
-                , target_factory_(target)
-                , my_id_(my_id)
+                : target_factory_(target)
                 , origin_loc_id_(hpx::find_here())
             {
-                //typedef ::components::aliens::ab_connect_action action_type;
-                //hpx::future<bool> connect = hpx::async<action_type>(target);
-                
+                body_.foreign_object_attached = false;
+                body_.my_id = my_id;
+
                 hpx::id_type invalid_type;
-
-//                typedef 
-//                    immune_system::server::alien_factory::alien_connect_action
-//                    action_type;
-
-               typedef
-                   immune_system::server::aliens::send_spawn_signal_action
-                   action_type;
-
-//                typedef
-//                immune_system::server::alien_factory::spawn_n_aliens_action
-//                              action_type2;
-               typedef
-               immune_system::server::alien_factory::alien_connect_action
-               action_type1;
-
-//                typedef
-//                    immune_system::server::antibodies_factory::alien_factory_active_action
-//                    action_type5;
 
                 //if(!connect.get())
                 {
@@ -91,7 +69,7 @@ namespace immune_system {
                 }
             }
 
-            hpx::util::tuple<bool, hpx::id_type>                      // return alien_id, if connection succesfull
+            hpx::util::tuple<bool, hpx::id_type>                 // return alien_id, if connection successful
                 alien_connect_helper(hpx::id_type target_factory)//,hpx::id_type my_id)
             {
                 hpx::future<tup_type> fut_tup;
@@ -100,9 +78,8 @@ namespace immune_system {
                     immune_system::server::alien_factory::alien_connect_action
                     action_type;
 
-                fut_tup = hpx::async<action_type>(target_factory, my_id_);
+                fut_tup = hpx::async<action_type>(target_factory, body_.my_id);
                 return fut_tup.get();
-
             }
 
             HPX_DEFINE_COMPONENT_ACTION(antibodies, alien_connect_helper);
@@ -123,8 +100,8 @@ namespace immune_system {
                     return false;
                 else
                 {
-                    target_alien_ = hpx::util::get<1>(res_pair);
-                    alien_attached_ = true;
+                    body_.foreign_object = hpx::util::get<1>(res_pair);
+                    body_.foreign_object_attached = true;                    
                     return true;
                 }
             }
@@ -135,12 +112,13 @@ namespace immune_system {
 //             void serialize(Archive&ar, unsigned version) {}
 
         private:
-            hpx::id_type my_id_;
+            bodies body_;
+            //hpx::id_type my_id_;
             hpx::id_type target_factory_;
-            hpx::id_type target_alien_;
+            //hpx::id_type target_alien_;
 
             hpx::id_type origin_loc_id_;
-            bool alien_attached_;
+            //bool alien_attached_;
 
             tup_type tup_;
 

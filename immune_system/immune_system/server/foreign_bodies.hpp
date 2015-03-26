@@ -15,6 +15,7 @@
 //#include <immune_system/server/antibodies.hpp>
 
 //#include <immune_system/server/antibodies.hpp>
+#include "common_objects.hpp"
 
 
 namespace immune_system
@@ -39,20 +40,22 @@ namespace immune_system
             ~aliens(){};
 
             aliens(hpx::id_type my_id)
-                :my_id_(my_id)
-                , t_(hpx::util::high_resolution_timer::high_resolution_timer())
+                : t_(hpx::util::high_resolution_timer::high_resolution_timer())
             {
+                body_.my_id = my_id;
             }
 
             bool ab_connect(hpx::id_type antibody)
             {               
                 hpx::id_type invalid_type;
-                if (ab_ != invalid_type)
+                if (body_.foreign_object != invalid_type)
                     return false;
                 else
                 {
-                    ab_ = antibody;
-                    return true;
+                    body_.foreign_object = antibody;
+                    body_.foreign_object_attached = true;
+                    //return true;
+                    return body_.foreign_object_attached;
                 }
             }
 
@@ -63,7 +66,7 @@ namespace immune_system
             bool ab_attached()
             {
                 hpx::id_type invalid_type;
-                if (ab_ != invalid_type)
+                if (body_.foreign_object != invalid_type)
                     return true;
                 else
                     return false;
@@ -97,8 +100,9 @@ namespace immune_system
 
 //            HPX_DEFINE_COMPONENT_ACTION(aliens, fission);
         private:
-            hpx::id_type my_id_;
-            hpx::id_type ab_;
+            bodies body_;
+            //hpx::id_type my_id_;
+            //hpx::id_type ab_;
             //std::vector<hpx::id_type> ab_contact_;
             hpx::util::high_resolution_timer t_;
         };

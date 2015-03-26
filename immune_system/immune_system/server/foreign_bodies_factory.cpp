@@ -23,3 +23,6 @@ HPX_REGISTER_ACTION(af_type::spawn_n_aliens_action
 
 HPX_REGISTER_ACTION(af_type::alien_connect_action
     , alien_factory_alien_connect_action);
+
+HPX_REGISTER_ACTION(af_type::aliens_active_action
+    , alien_factory_aliens_active_action);

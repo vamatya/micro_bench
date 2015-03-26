@@ -17,6 +17,7 @@
 
 #include <immune_system/immune_system/server/foreign_bodies_factory.hpp>
 #include "antibodies.hpp"
+#include "common_objects.hpp"
 
 
 namespace immune_system{
@@ -66,27 +67,30 @@ namespace immune_system{
             // alien_factory notifies its location/id
             bool alien_factory_active()
             {
-                return false;
+                hpx::id_type invalid_type;
+                if (al_factory_ != invalid_type)
+                {
+                    typedef immune_system::server::alien_factory::aliens_active_action
+                        action_type;
+                    hpx::future<bool> ret_type = hpx::async<action_type>(al_factory_);
+
+                    return boost::move(ret_type.get());
+
+                }
+                else
+                    return true;
             }
 
             HPX_DEFINE_COMPONENT_ACTION(antibodies_factory, alien_factory_active);
 
-            bool get_alien_factory(hpx::id_type al_factory)
+            bool update_alien_factory(hpx::id_type al_factory)
             {
                 al_factory_ = al_factory;
                 return true;
             }
-            //{
-            //    al_factory_ = al_factory;
-            //    return true;
-            //}
-            // Look into the stack of alien_factory for any aliens present. 
-            // tuple of id and filled/not flag??
 
-//             bool scan_aliens()
-//             {
-//                 return false;
-//             }
+            HPX_DEFINE_COMPONENT_ACTION(antibodies_factory, update_alien_factory);
+
 
             //Generate antibodies
             // For every contact point vaccant, generate an antibody and 
@@ -95,14 +99,10 @@ namespace immune_system{
 
             // look for identified aliens and target them. 
             // distributing factory method call components. 
-            //void spawn_antibody()
-            //{
-            //typedef ::components::alien_factory::spawn_action action_type;
-            //} 
-            //HPX_DEFINE_COMPONENT_ACTION(antibodies_factory, spawn_antibody);
+           
 
             //Spawn \N Antibodies
-            template <typename Component>
+            //template <typename Component>
             void spawn_n_antibodies(std::size_t num)
             {
                 typedef hpx::util::remote_locality_result value_type;
@@ -114,7 +114,8 @@ namespace immune_system{
                 typedef std::vector<hpx::id_type> id_vector_type;
 
                 hpx::components::component_type c_type =
-                    hpx::components::get_component_type<Component>();
+                    hpx::components::get_component_type<
+                        immune_system::server::antibodies>();
 
                 hpx::id_type this_loc = hpx::find_here();
 
@@ -147,18 +148,22 @@ namespace immune_system{
 
                 BOOST_FOREACH(hpx::id_type id, hpx::util::locality_results(res2))
                 {
-                    antibodies_.push_back(hpx::util::make_tuple(false, id));
+                    bodies temp(false, id);
+                    antibodies_.push_back(temp);
+                    
+                    //hpx::id_type temp_id = id;
+                    //antibodies_.push_back(hpx::util::make_tuple(false, id));
                 }
 
             }
 
-            //HPX_DEFINE_COMPONENT_ACTION(antibodies_factory, spawn_n_antibodies);
+            HPX_DEFINE_COMPONENT_ACTION(antibodies_factory, spawn_n_antibodies);
 
-            template <typename T>
-            struct spawn_n_antibodies_action
-                : hpx::actions::make_action < void (antibodies_factory::*)(T),
-                &antibodies_factory::template spawn_n_antibodies<T>, spawn_n_antibodies_action<T> >
-            {};
+//             template <typename T>
+//             struct spawn_n_antibodies_action
+//                 : hpx::actions::make_action < void (antibodies_factory::*)(T),
+//                 &antibodies_factory::template spawn_n_antibodies<T>, spawn_n_antibodies_action<T> >
+//             {};
 
 
             void target_aliens()
@@ -169,13 +174,15 @@ namespace immune_system{
                 hpx::id_type invalid_type;
 
                 //result, ab_id 
-                typedef hpx::util::tuple<hpx::future<bool>, hpx::id_type> fut_tup_type;
+                typedef hpx::util::tuple<hpx::lcos::future<bool>, hpx::id_type> fut_tup_type;
+
+                hpx::future<bool> fut_bool;
 
                 typedef std::vector<fut_tup_type> fut_vec_type;
                 
                 fut_vec_type fvec;
                 
-                fut_tup_type temp_tup;
+//                fut_tup_type temp_tup;
 
                 typedef immune_system::server::antibodies::alien_connect_action
                     action_type;
@@ -187,8 +194,8 @@ namespace immune_system{
 //                         std::get<0>(temp_tup) = hpx::async<action_type>(id, alien_factory)
 //                     }
 //                 }
-                BOOST_ASSERT(al_factory_ != invalid_type);
-
+//                 BOOST_ASSERT(al_factory_ != invalid_type);
+// 
 //                 BOOST_FOREACH(tup_type tup, antibodies_)
 //                 {
 //                     hpx::util::get<0>(temp_tup) 
@@ -196,19 +203,89 @@ namespace immune_system{
 //                     hpx::util::get<1>(temp_tup) = hpx::util::get<1>(tup);
 //                     fvec.push_back(temp_tup);
 //                 }
-                std::vector<hpx::future<bool> > ret_vec;
-                BOOST_FOREACH(hpx::id_type id, antibodies_)
-                {
-                    ret_vec.push_back(
-                        hpx::async<action_type>(id, al_factory_));
-                }
-
-                hpx::wait_all(ret_vec);
+//                 std::vector<hpx::future<bool> > ret_vec;
+//                 BOOST_FOREACH(hpx::id_type id, antibodies_)
+//                 {
+//                     ret_vec.push_back(
+//                         hpx::async<action_type>(id, al_factory_));
+//                 }
+// 
+//                 hpx::wait_all(ret_vec);
 
                 //fut_vec_type::iterator itr_f = fvec.begin();
             }
             
+            // Terminate Antibodies Factory
+
             //Delete Superfluous antibodies
+
+            //Antibodies Create Credit?
+            void print_stat()
+            {
+                std::cout << "My Rank:" << my_rank_ << std::endl;
+                std::cout << "Total Antibodies Created:" << antibodies_.size() << std::endl;
+            }
+
+            HPX_DEFINE_COMPONENT_ACTION(antibodies_factory, print_stat);
+        private:
+            hpx::id_type my_id_;
+            hpx::id_type al_factory_;   // single factory for now
+            std::size_t produced_count;
+            std::size_t my_rank_;
+
+            std::vector<hpx::id_type> fac_ids_;
+            std::vector<bodies> antibodies_;
+            //std::vector<hpx::util::tuple<bool, hpx::id_type> > antibodies_;
+            //std::vector<hpx::id_type> antibodies_;
+
+            std::size_t max_antibodies_;
+            std::size_t num_localities_;
+        };
+    }
+}
+
+ ////////////////////////////////////////////////////////
+
+typedef immune_system::server::antibodies_factory abf_type;
+
+HPX_REGISTER_ACTION_DECLARATION(abf_type::init_abf_action
+    , abf_init_abf_action
+    );
+HPX_REGISTER_ACTION_DECLARATION(abf_type::alien_factory_active_action
+    , abf_alien_factory_active_action
+    );
+
+HPX_REGISTER_ACTION_DECLARATION(abf_type::print_stat_action
+    , abf_print_stat_action
+    );
+HPX_REGISTER_ACTION_DECLARATION(abf_type::update_alien_factory_action
+    , abf_update_alien_factory_action);
+
+HPX_REGISTER_ACTION_DECLARATION(abf_type::spawn_n_antibodies_action,
+    abf_spawn_n_antibodies_action
+    );
+
+// HPX_REGISTER_ACTION_DECLARATION_TEMPLATE(
+//     (template <typename T>),
+//     (abf_type::spawn_n_antibodies_action<T>)
+//     )
+
+//HPX_REGISTER_ACTION_DECLARATION(abf_type::spawn_antibody_action,
+//    abf_spawn_antibody_action
+//    );
+
+
+
+
+
+// HPX_REGISTER_ACTION_DECLARATION(abf_type::kill_antibodies_action,
+//     abf_kill_antibodies_action
+//     );
+
+
+#endif //IMMUNE_SYSTEM_ANTIBODIES_FACTORY_HPP
+
+
 //             void kill_antibodies(std::vector<hpx::id_type> abs)
 //             {
 //                 BOOST_FOREACH(hpx::id_type id, abs)
@@ -239,62 +316,4 @@ namespace immune_system{
 //             {
 //             }
 //             //spawn_fb??
-// 
-            //Antibodies Create Credit?
-            void print_stat()
-            {
-                std::cout << "My Rank:" << my_rank_ << std::endl;
-                std::cout << "Total Antibodies Created:" << antibodies_.size() << std::endl;
-            }
-
-            HPX_DEFINE_COMPONENT_ACTION(antibodies_factory, print_stat);
-        private:
-            hpx::id_type my_id_;
-            hpx::id_type al_factory_;   // single factory for now
-            std::size_t produced_count;
-            std::size_t my_rank_;
-
-            std::vector<hpx::id_type> fac_ids_;
-            //std::vector<hpx::util::tuple<bool, hpx::id_type> > antibodies_;
-            std::vector<hpx::id_type> antibodies_;
-
-            std::size_t max_antibodies_;
-            std::size_t num_localities_;
-        };
-    }
-}
-
- ////////////////////////////////////////////////////////
-
-typedef immune_system::server::antibodies_factory abf_type;
-
-HPX_REGISTER_ACTION_DECLARATION(abf_type::init_abf_action,
-    abf_init_abf_action
-    );
-
-//HPX_REGISTER_ACTION_DECLARATION(abf_type::spawn_antibody_action,
-//    abf_spawn_antibody_action
-//    );
-
-// HPX_REGISTER_ACTION_DECLARATION(abf_type::spawn_n_antibodies_action,
-//     abf_spawn_n_antibodies_action
-//     );
-
-HPX_REGISTER_ACTION_DECLARATION(abf_type::alien_factory_active_action,
-    abf_alien_factory_active_action
-    );
-
-HPX_REGISTER_ACTION_DECLARATION(abf_type::print_stat_action,
-    abf_print_stat_action
-    );
-
-// HPX_REGISTER_ACTION_DECLARATION(abf_type::kill_antibodies_action,
-//     abf_kill_antibodies_action
-//     );
-
-HPX_REGISTER_ACTION_DECLARATION_TEMPLATE(
-    (template <typename T>),
-    (abf_type::spawn_n_antibodies_action<T>)
-    )
-
-#endif //IMMUNE_SYSTEM_ANTIBODIES_FACTORY_HPP
+//
