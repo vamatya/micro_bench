@@ -40,7 +40,7 @@ namespace immune_system
             ~aliens(){};
 
             aliens(hpx::id_type my_id)
-                : t_(hpx::util::high_resolution_timer::high_resolution_timer())
+                //: t_(hpx::util::high_resolution_timer::high_resolution_timer())
             {
                 body_.my_id = my_id;
             }

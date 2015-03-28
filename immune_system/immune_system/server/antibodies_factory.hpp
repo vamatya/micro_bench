@@ -240,6 +240,9 @@ namespace immune_system{
 
             std::size_t max_antibodies_;
             std::size_t num_localities_;
+
+            hpx::util::high_resolution_timer time_;
+
         };
     }
 }
