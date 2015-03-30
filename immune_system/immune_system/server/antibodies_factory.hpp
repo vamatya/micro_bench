@@ -45,21 +45,30 @@ namespace immune_system{
 
             }
 
-            void init_abf()
+            void init_abf(std::vector<hpx::id_type> alien_factories
+                , hpx::id_type my_id, std::size_t num_localities
+                , std::size_t max_aliens_perloc)
             {
+
             }
 
             HPX_DEFINE_COMPONENT_ACTION(antibodies_factory, init_abf);
 
             //////////////////////////////////////////////////////////////////////////
 
-            void resolve_names(std::vector<hpx::id_type> ids, std::size_t rank)
+            void init_resolve_names(std::vector<hpx::id_type> alien_factories
+                , hpx::id_type my_id, std::size_t num_localities
+                , std::size_t max_aliens_perloc
+                , std::vector<hpx::id_type> ids, std::size_t rank)
             {
-                fac_ids_ = ids;
+                alien_factories_ = alien_factories;
+                my_id_ = my_id;
+                num_localities_ = num_localities;
+                antibody_factories_ = ids;
                 my_rank_ = rank;
             }
 
-            HPX_DEFINE_COMPONENT_ACTION(antibodies_factory, resolve_names);
+            HPX_DEFINE_COMPONENT_ACTION(antibodies_factory, init_resolve_names);
 
             //Sense foreign body
             // Identify each alien body, and get the no. of antibodies it has 
@@ -233,12 +242,14 @@ namespace immune_system{
             std::size_t produced_count;
             std::size_t my_rank_;
 
-            std::vector<hpx::id_type> fac_ids_;
+            std::vector<hpx::id_type> antibody_factories_;
+            std::vector<hpx::id_type> alien_factories_;
             std::vector<bodies> antibodies_;
             //std::vector<hpx::util::tuple<bool, hpx::id_type> > antibodies_;
             //std::vector<hpx::id_type> antibodies_;
 
             std::size_t max_antibodies_;
+            std::size_t max_aliens_per_loc_;
             std::size_t num_localities_;
 
             hpx::util::high_resolution_timer time_;
@@ -266,6 +277,10 @@ HPX_REGISTER_ACTION_DECLARATION(abf_type::update_alien_factory_action
 
 HPX_REGISTER_ACTION_DECLARATION(abf_type::spawn_n_antibodies_action,
     abf_spawn_n_antibodies_action
+    );
+
+HPX_REGISTER_ACTION_DECLARATION(abf_type::init_resolve_names_action
+    , abf_init_resolve_names_action
     );
 
 // HPX_REGISTER_ACTION_DECLARATION_TEMPLATE(

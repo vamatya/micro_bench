@@ -37,6 +37,10 @@ HPX_REGISTER_ACTION(abf_type::alien_factory_active_action
     , abf_alien_factory_active_action);
 HPX_REGISTER_ACTION(abf_type::print_stat_action
     , abf_print_stat_action);
+
+HPX_REGISTER_ACTION(abf_type::init_resolve_names_action
+    , abf_init_resolve_names_action
+    );
 // HPX_REGISTER_ACTION(abf_type::kill_antibodies_action
 //     , abf_kill_antibodies_action);
 
