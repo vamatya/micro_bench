@@ -211,7 +211,7 @@ namespace immune_system{
 
             HPX_DEFINE_COMPONENT_ACTION(antibodies_factory, num_create);
 
-            void target_aliens()
+            void target_aliens(hpx::id_type alien_factory)
             {
                 BOOST_ASSERT(alien_factories_.size() != NULL);
                 BOOST_ASSERT(antibodies_.size() != NULL);

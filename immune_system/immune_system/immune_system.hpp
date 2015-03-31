@@ -15,6 +15,8 @@
 
 #include <immune_system/immune_system/server/antibodies_factory.hpp>
 
+//typedef hpx::util::tuple<bool
+
 inline std::pair<std::size_t, std::vector<hpx::util::remote_locality_result> >
 distribute_ab_factory(std::vector<hpx::id_type>& localities
 , hpx::components::component_type type);
@@ -193,23 +195,75 @@ inline std::vector<hpx::id_type> create_ab_factory(
     return ab_factories;
 }
 
-template <typename AntiBodiesFactory>
+template <typename AntiBodiesFactory, typename ForeignBodiesFactory>
 void process_foreignbodies(boost::program_options::variables_map & vm
-    , std::vector<hpx::id_type> & ab_factories)
+    , std::vector<hpx::id_type> & ab_factories
+    , std::vector<hpx::id_type> & aliens_factories)
 {
-    // Antibodies Number spawn rate
-    std::size_t num_antibodies_rate = vm["max-aliens-num"].as<std::size_t>()/;
-    typedef AntiBodiesFactory::spawn_n_aliens_action spawn_action;
+    bool alien_factories_active = true;
 
+    //std::size_t num_antibodies_rate = vm["max-aliens-num"].as<std::size_t>();// / ;
+
+    std::size_t max_aliens_per_loc = vm["max-aliens-num"].as<std::size_t>();
     // aliens_active??
-    // What is the total max_aliens?
-    // create_num antibodies not exceeding the limit for the locality. 
-    // target_aliens (has to be successful, if not, destroy object through 
-        // out of context..
-    // aliens_active??
+    typedef ForeignBodiesFactory::aliens_active_action active_action_type;
+    hpx::util::tuple<bool, hpx::id_type> tup_type;
+    hpx::util::tuple<hpx::future<bool>, hpx::id_type> tup_fut_type;
+
+    std::vector<tup_type> vec_aliens_active;
+    //std::vector<hpx::future<bool> > aliens_active_future;
+    std::vector<tup_fut_type> vec_fut_aliens_active;
+
+    hpx::id_type invalid_type;
+
+    std::size_t active_alien_factories_count = aliens_factories.size();
+
+    while (alien_factories_active)
+    {
+        BOOST_FOREACH(hpx::id_type id, aliens_factories)
+        {
+            //aliens_active_future.push_back(hpx::async<active_action_type>);
+            tup_fut_type temp;
+            hpx::util::get<0>(temp) = hpx::async<active_action_type>(id);
+            hpx::util::get<1>(temp) = id;
+            vec_fut_aliens_active.push_back(temp);
+        }
+
+//         //num_antibodies_to_create: for now just create the number 
+//         //      reported by the first antibody factory
+
+        typedef AntiBodyFactory::target_alien_action target_action;
+
+        std::size_t active_alien_factories_count = 
+        
+        BOOST_FOREACH(tup_fut_type tft, vec_fut_aliens_active)
+        {
+            if (!hpx::util::get<0>(tft).get())
+            {
+                BOOST_FOREACH(hpx::id_type id, ab_factories)
+                {
+                    hpx::async<target_action>(id, hpx::util::get<1>);
+                }
+            }
+            else
+            {
+                --active_alien_factories_count;
+            }
+        }
+
+        if (!active_alien_factories_count)
+        {
+            alien_factories_active = false;
+        }        
+    }
 }
 
 
 #endif // IMMUNE_SYSTEM_ANTIBODIES_HPP
 
 
+// What is the total max_aliens?
+// create_num antibodies not exceeding the limit for the locality. 
+// target_aliens (has to be successful, if not, destroy object through 
+// out of context..
+// aliens_active??
