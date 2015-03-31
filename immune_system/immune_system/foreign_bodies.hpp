@@ -158,8 +158,7 @@ distribute_alien_factory(std::vector<hpx::id_type>& localities
 
 template <typename AlienFactory>
 inline std::vector<hpx::id_type> create_alien_factory(
-    boost::program_options::variables_map & vm, std::vector<hpx::id_type>
-    ab_factories)
+    boost::program_options::variables_map & vm)
 {
     typedef std::vector<hpx::id_type> id_vector_type;
 
@@ -201,7 +200,8 @@ inline std::vector<hpx::id_type> create_alien_factory(
     std::pair<std::size_t, std::vector<hpx::util::remote_locality_result> >
         result(boost::move(async_result.get()));
 
-    std::size_t num_alien_factories = result.first;// ();
+    BOOST_ASSERT(num_alien_factories == result.first);
+    //std::size_t num_alien_factories = result.first;// ();
     alien_factories.reserve(num_alien_factories);
     init_futures.reserve(num_alien_factories);
 

@@ -84,7 +84,6 @@ namespace immune_system{
                     hpx::future<bool> ret_type = hpx::async<action_type>(al_factory_);
 
                     return boost::move(ret_type.get());
-
                 }
                 else
                     return true;
@@ -177,7 +176,7 @@ namespace immune_system{
 
             void target_aliens()
             {
-                BOOST_ASSERT(fac_ids_.size() != NULL);
+                BOOST_ASSERT(alien_factories_.size() != NULL);
                 BOOST_ASSERT(antibodies_.size() != NULL);
 
                 hpx::id_type invalid_type;
