@@ -170,15 +170,6 @@ inline std::vector<hpx::id_type> create_ab_factory(
     std::vector<hpx::future<void> > resolve_names_fut, spawn_future;
     resolve_names_fut.reserve(num_ab_factories);
     spawn_future.reserve(num_ab_factories);
-    
-    
-//     typedef immune_system::server::antibodies_factory::spawn_n_antibodies_action 
-//         spawn_action;
-//     typedef AntiBodyFactory::spawn_n_antibodies_action spawn_action;
-
-//     typedef typename AntiBodyFactory::spawn_n_antibodies_action <
-//         immune_system::server::antibodies
-//     > spawn_action;
 
     std::size_t rank = 0;
     BOOST_FOREACH(hpx::id_type const& id, ab_factories)
@@ -200,6 +191,22 @@ inline std::vector<hpx::id_type> create_ab_factory(
     hpx::wait_all(spawn_future);
 
     return ab_factories;
+}
+
+template <typename AntiBodiesFactory>
+void process_foreignbodies(boost::program_options::variables_map & vm
+    , std::vector<hpx::id_type> & ab_factories)
+{
+    // Antibodies Number spawn rate
+    std::size_t num_antibodies_rate = vm["max-aliens-num"].as<std::size_t>()/;
+    typedef AntiBodiesFactory::spawn_n_aliens_action spawn_action;
+
+    // aliens_active??
+    // What is the total max_aliens?
+    // create_num antibodies not exceeding the limit for the locality. 
+    // target_aliens (has to be successful, if not, destroy object through 
+        // out of context..
+    // aliens_active??
 }
 
 

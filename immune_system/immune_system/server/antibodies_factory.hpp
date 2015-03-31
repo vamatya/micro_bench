@@ -13,7 +13,7 @@
 #include <hpx/runtime/components/server/managed_component_base.hpp>
 
 #include <hpx/components/distributing_factory/distributing_factory.hpp>
-
+#include <hpx/util/tuple.hpp>
 
 #include <immune_system/immune_system/server/foreign_bodies_factory.hpp>
 #include "antibodies.hpp"
@@ -173,6 +173,43 @@ namespace immune_system{
 //                 &antibodies_factory::template spawn_n_antibodies<T>, spawn_n_antibodies_action<T> >
 //             {};
 
+            std::size_t num_create()//hpx::util::high_resolution_timer& t)
+            {
+
+                std::size_t y = 0;
+                if (time_.elapsed_microseconds() > 0) //!= hpx::util::high_resolution_timer::high_resolution_timer())
+                {
+                    // Exponential Function for Bacterial Growth
+                    // P(t) = P(0)* power(2,t/1000)  
+                    // population doubles every 10 mili-seconds
+
+                    BOOST_ASSERT(max_aliens_ > 0);
+
+                    if (antibodies_.size() < max_aliens_)
+                    {
+                        // input in step of microseconds. 
+                        y = static_cast<std::size_t>(
+                            antibodies_.size()*std::pow(2.0, time_.elapsed_microseconds() / 1000000));
+
+                        //max_aliens_* std::exp(
+                        //    -1 * std::exp(
+                        //        -2 * static_cast<double>(t_.elapsed()/1000000))));
+                    }
+                }
+
+                if (antibodies_.size() + y < max_aliens_)
+                    return y;
+                else
+                {
+                    if ((max_aliens_ - antibodies_.size()) > 0)
+                        return (max_aliens_ - antibodies_.size());
+                    else
+                        return 0;
+                }
+
+            }
+
+            HPX_DEFINE_COMPONENT_ACTION(antibodies_factory, num_create);
 
             void target_aliens()
             {
@@ -190,35 +227,36 @@ namespace immune_system{
                 
                 fut_vec_type fvec;
                 
-//                fut_tup_type temp_tup;
+               fut_tup_type temp_tup;
 
                 typedef immune_system::server::antibodies::alien_connect_action
                     action_type;
 
-//                 BOOST_FOREACH(hpx::id_type alien_factory, fac_ids_)
-//                 {
-//                     BOOST_FOREACH(hpx::id_type id, antibodies_)
-//                     {
-//                         std::get<0>(temp_tup) = hpx::async<action_type>(id, alien_factory)
-//                     }
-//                 }
-//                 BOOST_ASSERT(al_factory_ != invalid_type);
-// 
-//                 BOOST_FOREACH(tup_type tup, antibodies_)
-//                 {
-//                     hpx::util::get<0>(temp_tup) 
-//                         = hpx::async<action_type>(hpx::util::get<1>(tup), al_factory_);
-//                     hpx::util::get<1>(temp_tup) = hpx::util::get<1>(tup);
-//                     fvec.push_back(temp_tup);
-//                 }
-//                 std::vector<hpx::future<bool> > ret_vec;
-//                 BOOST_FOREACH(hpx::id_type id, antibodies_)
-//                 {
-//                     ret_vec.push_back(
-//                         hpx::async<action_type>(id, al_factory_));
-//                 }
-// 
-//                 hpx::wait_all(ret_vec);
+                //update antibodies_.connected_other_?? 
+                BOOST_FOREACH(hpx::id_type alien_factory, alien_factories_)
+                {
+                    BOOST_FOREACH(hpx::id_type id, antibodies_)
+                    {
+                        hpx::util::get<0>(temp_tup) = hpx::async<action_type>(id, alien_factory)
+                    }
+                }
+                BOOST_ASSERT(al_factory_ != invalid_type);
+
+                BOOST_FOREACH(tup_type tup, antibodies_)
+                {
+                    hpx::util::get<0>(temp_tup) 
+                        = hpx::async<action_type>(hpx::util::get<1>(tup), al_factory_);
+                    hpx::util::get<1>(temp_tup) = hpx::util::get<1>(tup);
+                    fvec.push_back(temp_tup);
+                }
+                std::vector<hpx::future<bool> > ret_vec;
+                BOOST_FOREACH(hpx::id_type id, antibodies_)
+                {
+                    ret_vec.push_back(
+                        hpx::async<action_type>(id, al_factory_));
+                }
+
+                hpx::wait_all(ret_vec);
 
                 //fut_vec_type::iterator itr_f = fvec.begin();
             }
@@ -250,6 +288,7 @@ namespace immune_system{
             std::size_t max_antibodies_;
             std::size_t max_aliens_per_loc_;
             std::size_t num_localities_;
+            std::size_t max_aliens_;
 
             hpx::util::high_resolution_timer time_;
 

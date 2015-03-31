@@ -165,7 +165,7 @@ namespace immune_system {
 
             HPX_DEFINE_COMPONENT_ACTION(alien_factory, spawn_n_aliens);
 
-            // Returns no. of antibodies to spawn. 
+            // Returns no. of aliens to spawn. 
             std::size_t num_create()//hpx::util::high_resolution_timer& t)
             {
 
