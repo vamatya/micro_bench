@@ -24,7 +24,7 @@ int hpx_main(boost::program_options::variables_map & vm)
         create_ab_factory<immune_system::server::antibodies_factory>(vm, alien_fac);
 
     process_foreignbodies < immune_system::server::antibodies_factory
-        , immune_system::server::aliens_factory>(vm, antibody_fac);
+        , immune_system::server::alien_factory>(vm, antibody_fac, alien_fac);
     
 
     return hpx::finalize();

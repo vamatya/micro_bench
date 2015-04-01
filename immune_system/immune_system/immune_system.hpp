@@ -207,8 +207,9 @@ void process_foreignbodies(boost::program_options::variables_map & vm
     std::size_t max_aliens_per_loc = vm["max-aliens-num"].as<std::size_t>();
     // aliens_active??
     typedef ForeignBodiesFactory::aliens_active_action active_action_type;
-    hpx::util::tuple<bool, hpx::id_type> tup_type;
-    hpx::util::tuple<hpx::future<bool>, hpx::id_type> tup_fut_type;
+    typedef hpx::util::tuple<bool, hpx::id_type> tup_type;
+
+    typedef hpx::util::tuple<hpx::shared_future<bool>, hpx::id_type> tup_fut_type;
 
     std::vector<tup_type> vec_aliens_active;
     //std::vector<hpx::future<bool> > aliens_active_future;
@@ -218,31 +219,33 @@ void process_foreignbodies(boost::program_options::variables_map & vm
 
     std::size_t active_alien_factories_count = aliens_factories.size();
 
-    while (alien_factories_active)
+    while(alien_factories_active)
     {
         BOOST_FOREACH(hpx::id_type id, aliens_factories)
         {
             //aliens_active_future.push_back(hpx::async<active_action_type>);
-            tup_fut_type temp;
-            hpx::util::get<0>(temp) = hpx::async<active_action_type>(id);
+            tup_fut_type temp;// = tup_fut_type();
+            hpx::util::get<0>(temp) = boost::move(hpx::async<active_action_type>(id));
             hpx::util::get<1>(temp) = id;
-            vec_fut_aliens_active.push_back(temp);
+            vec_fut_aliens_active.push_back(boost::move(temp));
         }
 
-//         //num_antibodies_to_create: for now just create the number 
-//         //      reported by the first antibody factory
+        //num_antibodies_to_create: for now just create the number 
+        //      reported by the first antibody factory
 
-        typedef AntiBodyFactory::target_alien_action target_action;
+        typedef AntiBodiesFactory::target_aliens_action target_action;
 
-        std::size_t active_alien_factories_count = 
+        std::vector<hpx::future<void> > ret_fut;
         
         BOOST_FOREACH(tup_fut_type tft, vec_fut_aliens_active)
         {
+            //bool temp = hpx::util::get<0>(tft).get();
+
             if (!hpx::util::get<0>(tft).get())
             {
                 BOOST_FOREACH(hpx::id_type id, ab_factories)
                 {
-                    hpx::async<target_action>(id, hpx::util::get<1>);
+                    ret_fut.push_back(hpx::async<target_action>(id, hpx::util::get<1>(tft)));
                 }
             }
             else

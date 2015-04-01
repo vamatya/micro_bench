@@ -219,15 +219,15 @@ namespace immune_system{
                 hpx::id_type invalid_type;
 
                 //result, ab_id 
-                typedef hpx::util::tuple<hpx::lcos::future<bool>, hpx::id_type> fut_tup_type;
+                typedef hpx::util::tuple< hpx::future<bool>, hpx::id_type > fut_tup_type;
 
                 hpx::future<bool> fut_bool;
 
                 typedef std::vector<fut_tup_type> fut_vec_type;
                 
-                fut_vec_type fvec;
+                //fut_vec_type fvec;
                 
-               fut_tup_type temp_tup;
+               //fut_tup_type temp_tup;
 
                 typedef immune_system::server::antibodies::alien_connect_action
                     action_type;
@@ -235,25 +235,25 @@ namespace immune_system{
                 //update antibodies_.connected_other_?? 
                 BOOST_FOREACH(hpx::id_type alien_factory, alien_factories_)
                 {
-                    BOOST_FOREACH(hpx::id_type id, antibodies_)
+                    BOOST_FOREACH(bodies id, antibodies_)
                     {
-                        hpx::util::get<0>(temp_tup) = hpx::async<action_type>(id, alien_factory)
+                        //hpx::util::get<0>(temp_tup) = hpx::async<action_type>(id, alien_factory)
                     }
                 }
                 BOOST_ASSERT(al_factory_ != invalid_type);
 
-                BOOST_FOREACH(tup_type tup, antibodies_)
+                BOOST_FOREACH(bodies bd, antibodies_)
                 {
-                    hpx::util::get<0>(temp_tup) 
-                        = hpx::async<action_type>(hpx::util::get<1>(tup), al_factory_);
-                    hpx::util::get<1>(temp_tup) = hpx::util::get<1>(tup);
-                    fvec.push_back(temp_tup);
+//                     hpx::util::get<0>(temp_tup) 
+//                         = hpx::async<action_type>(hpx::util::get<1>(tup), al_factory_);
+//                     hpx::util::get<1>(temp_tup) = hpx::util::get<1>(tup);
+//                     fvec.push_back(temp_tup);
                 }
                 std::vector<hpx::future<bool> > ret_vec;
-                BOOST_FOREACH(hpx::id_type id, antibodies_)
+                BOOST_FOREACH(bodies bd, antibodies_)
                 {
-                    ret_vec.push_back(
-                        hpx::async<action_type>(id, al_factory_));
+//                     ret_vec.push_back(
+//                         hpx::async<action_type>(id, al_factory_));
                 }
 
                 hpx::wait_all(ret_vec);
@@ -261,6 +261,7 @@ namespace immune_system{
                 //fut_vec_type::iterator itr_f = fvec.begin();
             }
             
+            HPX_DEFINE_COMPONENT_ACTION(antibodies_factory, target_aliens);
             // Terminate Antibodies Factory
 
             //Delete Superfluous antibodies
@@ -321,6 +322,9 @@ HPX_REGISTER_ACTION_DECLARATION(abf_type::init_resolve_names_action
     , abf_init_resolve_names_action
     );
 
+HPX_REGISTER_ACTION_DECLARATION(abf_type::target_aliens_action,
+    abf_target_aliens_action
+    );
 // HPX_REGISTER_ACTION_DECLARATION_TEMPLATE(
 //     (template <typename T>),
 //     (abf_type::spawn_n_antibodies_action<T>)
