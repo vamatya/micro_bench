@@ -42,26 +42,34 @@ namespace immune_system {
             // more aliens. 
             //void spawn_n_aliens(std::size_t num);
 
-            alien_factory(){}
-            ~alien_factory(){}
-
-            alien_factory(hpx::id_type my_id)
-                : my_id_(my_id)
-                , time_(hpx::util::high_resolution_timer::high_resolution_timer())
+            alien_factory()
+                : time_(hpx::util::high_resolution_timer::high_resolution_timer())
                 , epsilon_(1000)
                 , t_max_reached_(false,0)
                 , anti_body_count_(0)
             {
                 spawn_n_aliens(1);
             }
+            ~alien_factory(){}
 
-            void init()
+//             alien_factory(hpx::id_type my_id)
+//                 : my_id_(my_id)
+//                 , time_(hpx::util::high_resolution_timer::high_resolution_timer())
+//                 , epsilon_(1000)
+//                 , t_max_reached_(false,0)
+//                 , anti_body_count_(0)
+//             {
+//                 spawn_n_aliens(1);
+//             }
+            void init(hpx::id_type my_id, std::size_t max_alien_num)
             {
-
+                my_id_ = my_id;
+                max_aliens_ = max_alien_num;                
             }
-            
+
             HPX_DEFINE_COMPONENT_ACTION(alien_factory, init);
 
+            
 //             bool alien_connect_helper(hpx::id_type ab_id)
 //             {
 //                 typedef immune_system::server::aliens::
@@ -87,23 +95,13 @@ namespace immune_system {
                         BOOST_ASSERT(res.get() == true);
                         hpx::util::get<0>(res_tup) = res.get();
                         hpx::util::get<1>(res_tup) = b.my_id;
+                        b.foreign_object = ab_id; 
+                        ++anti_body_count_;
                         break;
                     }
+                    
                 }
 
-//                 BOOST_FOREACH(tup_type t, aliens_)
-//                 {
-//                     if ((hpx::util::get<0>(t) == false) && (ab_id != invalid_type))
-//                     {
-//                         hpx::util::get<0>(temp) = true;
-//                         hpx::util::get<0>(t) = true;
-//                         hpx::util::get<1>(temp) = hpx::util::get<1>(t);
-//                         //res = 
-//                             hpx::async<action_type>(
-//                             hpx::util::get<1>(t), ab_id);
-//                             antibodies_.push_back(ab_id);
-//                     }
-//                 }
                 return res_tup;
             }
 
@@ -150,10 +148,16 @@ namespace immune_system {
                     res2.push_back(r1);
                 }
 
+                typedef immune_system::server::aliens::init_action 
+                    init_action_type;
+
+                std::vector<hpx::future<void> > vec_fut;
+
                 BOOST_FOREACH(hpx::id_type id, hpx::util::locality_results(res2))
                 {
                     bodies temp(false, id);
                     aliens_.push_back(temp);
+                    vec_fut.push_back(hpx::async<init_action_type>(id, id));
                 }
 
 //                 BOOST_FOREACH(hpx::id_type id, hpx::util::locality_results(res2))
@@ -161,6 +165,8 @@ namespace immune_system {
 //                     tup_type temp = hpx::util::make_tuple(false, id);
 //                     aliens_.push_back(temp);
 //                 }
+
+                hpx::wait_all(vec_fut);
             }
 
             HPX_DEFINE_COMPONENT_ACTION(alien_factory, spawn_n_aliens);
@@ -204,6 +210,7 @@ namespace immune_system {
 
             HPX_DEFINE_COMPONENT_ACTION(alien_factory, num_create);
 
+            // TODO: 
             void migrate_update_count()
             {
                 mutex_type::scoped_lock lk(mtx);
@@ -224,7 +231,7 @@ namespace immune_system {
                 // locality where aliens are generated. 
 
                 //update ab_count??
-                if (aliens_.size() == max_aliens_)
+                if ((aliens_.size() == max_aliens_) && hpx::util::get<0>(t_max_reached_ ) == false)
                 {
                     hpx::util::get<0>(t_max_reached_) = true;
                     hpx::util::get<1>(t_max_reached_) = time_.elapsed_microseconds();                    
@@ -234,31 +241,24 @@ namespace immune_system {
                 if ((aliens_.size() - anti_body_count_ < 10) && (aliens_.size() == max_aliens_))
                 {  
                     if (time_.elapsed_microseconds() - hpx::util::get<1>(t_max_reached_) > 10000000)
-                        return true;
+                        return false;
                 }                   
                     
-                return false;
+                return true;
             }
 
             HPX_DEFINE_COMPONENT_ACTION(alien_factory, aliens_active);
 
             void create_aliens()
             {
-                while (aliens_active())
+                //while (aliens_active())
+                if (aliens_active())
                 {
                     std::size_t aliens_to_spawn = num_create();
-                    
-                    // Max limit of aliens to spawn reached
-//                     if (aliens_to_spawn = 0)
-//                     {
-//                         if (!hpx::util::get<0>(t_max_reached_))
-//                         {
-//                             hpx::util::get<0>(t_max_reached_) = true;
-//                             hpx::util::get<1>(t_max_reached_) = time_.elapsed_microseconds();
-//                         }
-//                     }
-//                     else
+                    if (aliens_to_spawn)
+                    {
                         spawn_n_aliens(aliens_to_spawn);
+                    }                    
                 }
             }
             
@@ -267,6 +267,14 @@ namespace immune_system {
 
 //             template <typename Archive>
 //             void serialize(Archive&ar, unsigned version) {}
+
+            std::size_t antibodies_deficit()
+            {
+                BOOST_ASSERT(aliens_.size() >= anti_body_count_);
+                return aliens_.size() - anti_body_count_;
+            }
+
+            HPX_DEFINE_COMPONENT_ACTION(alien_factory, antibodies_deficit);
 
         private:
             std::size_t epsilon_;
@@ -318,5 +326,8 @@ HPX_REGISTER_ACTION_DECLARATION(af_type::aliens_active_action
 
 HPX_REGISTER_ACTION_DECLARATION(af_type::migrate_update_count_action
     , alien_factory_migrate_update_count_action);
+
+HPX_REGISTER_ACTION_DECLARATION(af_type::antibodies_deficit_action
+    , alien_factory_antibodies_deficit_action);
 
 #endif //IMMUNE_SYSTEM_FOREIGN_BODIES_FACTORY_HPP

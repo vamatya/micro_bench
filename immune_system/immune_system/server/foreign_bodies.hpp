@@ -36,14 +36,26 @@ namespace immune_system
             // If 7 antibodies contact an alien for a set amount of time, 
             //		all the entities are destroyed. 
 
-            aliens(){};
-            ~aliens(){};
+            typedef hpx::util::tuple<bool, hpx::id_type> tup_type;
+
+            aliens()
+            {
+                body_.foreign_object_attached = false;
+            }
+            ~aliens(){}
 
             aliens(hpx::id_type my_id)
                 //: t_(hpx::util::high_resolution_timer::high_resolution_timer())
             {
                 body_.my_id = my_id;
             }
+
+            void init(hpx::id_type my_id)
+            {
+                body_.my_id = my_id;
+            }
+
+            HPX_DEFINE_COMPONENT_ACTION(aliens, init);
 
             bool ab_connect(hpx::id_type antibody)
             {               
@@ -122,4 +134,6 @@ HPX_REGISTER_ACTION_DECLARATION(aliens_type::alien_active_action
 HPX_REGISTER_ACTION_DECLARATION(aliens_type::send_spawn_signal_action
     , aliens_send_spawn_signal_action);
 
+HPX_REGISTER_ACTION_DECLARATION(aliens_type::init_action
+    , aliens_init_action);
 #endif //IMMUNE_SYSTEM_FOREIGN_BODIES_HPP

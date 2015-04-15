@@ -38,7 +38,11 @@ namespace immune_system {
             // If the alien already has all the contact points filled, 
             // contact ab_factory for possible new target, or (self destroy??)
             // or get terminated??
-            antibodies(){}
+            antibodies()
+                :origin_loc_id_(hpx::find_here())
+            {
+                //body_.foreign_object_attached = false;
+            }
 
             // Explicitly destroy superfluous antibodies. 
             // Done by the antibodies_factory. 
@@ -69,6 +73,13 @@ namespace immune_system {
                 }
             }
 
+            void init(hpx::id_type my_id)
+            {
+                body_.my_id = my_id;
+            }
+
+            HPX_DEFINE_COMPONENT_ACTION(antibodies, init);
+
             hpx::util::tuple<bool, hpx::id_type>                 // return alien_id, if connection successful
                 alien_connect_helper(hpx::id_type target_factory)//,hpx::id_type my_id)
             {
@@ -84,25 +95,34 @@ namespace immune_system {
 
             HPX_DEFINE_COMPONENT_ACTION(antibodies, alien_connect_helper);
 
-            bool      
-            alien_connect(hpx::id_type target_factory)
+            // Overload?
+            tup_type
+            alien_connect(hpx::id_type my_id, hpx::id_type target_factory)
             {
                 // update target. 
                 target_factory_ = target_factory;
-                //
+                body_.my_id = my_id;
 
-                //typedef std::tuple<bool, hpx::id_type> tup_type;
+
                 hpx::future<tup_type> tup_fut;
+                typedef
+                    immune_system::server::alien_factory::alien_connect_action
+                    action_type;
 
-                tup_type res_pair = alien_connect_helper(target_factory_);// , my_id_);
-                //hpx::util::get
+                tup_fut = hpx::async<action_type>(target_factory, body_.my_id);
+
+                tup_type res_pair = tup_fut.get();
+
+                //ERROR ?!
                 if (!hpx::util::get<0>(res_pair))
-                    return false;
+                {
+                    return res_pair;
+                }
                 else
                 {
                     body_.foreign_object = hpx::util::get<1>(res_pair);
                     body_.foreign_object_attached = true;                    
-                    return true;
+                    return res_pair;
                 }
             }
 
@@ -149,6 +169,11 @@ HPX_REGISTER_ACTION_DECLARATION(
     immune_system::server::antibodies::alien_connect_helper_action
     , antibodies_alien_connect_helper_action
     )
+
+HPX_REGISTER_ACTION_DECLARATION(
+    immune_system::server::antibodies::init_action
+    , antibodies_init_action
+)
 
 /*HPX_REGISTER_ACTION_DECLARATION(
     ::components::aliens::ab_connect_action,

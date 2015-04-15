@@ -23,9 +23,10 @@ int hpx_main(boost::program_options::variables_map & vm)
     std::vector<hpx::id_type> antibody_fac =
         create_ab_factory<immune_system::server::antibodies_factory>(vm, alien_fac);
 
-    process_foreignbodies < immune_system::server::antibodies_factory
-        , immune_system::server::alien_factory>(vm, antibody_fac, alien_fac);
+    //activate_aliens<immune_system::server::alien_factory>(alien_fac);
     
+    process_foreignbodies < immune_system::server::antibodies_factory
+        , immune_system::server::alien_factory > (vm, antibody_fac, alien_fac);
 
     return hpx::finalize();
 }

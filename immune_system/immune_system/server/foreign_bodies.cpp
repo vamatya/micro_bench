@@ -22,3 +22,6 @@ HPX_REGISTER_ACTION(aliens_type::alien_active_action
 
 HPX_REGISTER_ACTION(aliens_type::send_spawn_signal_action
     , aliens_send_spawn_signal_action);
+
+HPX_REGISTER_ACTION(aliens_type::init_action
+    , aliens_init_action);

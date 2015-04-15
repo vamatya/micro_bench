@@ -162,12 +162,12 @@ inline std::vector<hpx::id_type> create_ab_factory(
 
     BOOST_FOREACH(hpx::id_type id, hpx::util::locality_results(res))
     {
-//         init_futures.push_back(
-//         hpx::async<typename AntiBodyFactory::init_abf_action>(
-//             id, alien_factories, id, num_loc, max_aliens));
+//          init_futures.push_back(
+//          hpx::async<typename AntiBodyFactory::init_abf_action>(
+//              id, alien_factories, id, num_loc, max_aliens));
         ab_factories.push_back(id);
     }
-//     hpx::wait_all(init_futures);
+//    hpx::wait_all(init_futures);
 
     std::vector<hpx::future<void> > resolve_names_fut, spawn_future;
     resolve_names_fut.reserve(num_ab_factories);
@@ -209,7 +209,7 @@ void process_foreignbodies(boost::program_options::variables_map & vm
     typedef ForeignBodiesFactory::aliens_active_action active_action_type;
     typedef hpx::util::tuple<bool, hpx::id_type> tup_type;
 
-    typedef hpx::util::tuple<hpx::shared_future<bool>, hpx::id_type> tup_fut_type;
+    typedef hpx::util::tuple<hpx::future<bool>, hpx::id_type> tup_fut_type;
 
     std::vector<tup_type> vec_aliens_active;
     //std::vector<hpx::future<bool> > aliens_active_future;
@@ -219,15 +219,19 @@ void process_foreignbodies(boost::program_options::variables_map & vm
 
     std::size_t active_alien_factories_count = aliens_factories.size();
 
+    typedef ForeignBodiesFactory::create_aliens_action create_aliens_action_type;
+
     while(alien_factories_active)
     {
+
         BOOST_FOREACH(hpx::id_type id, aliens_factories)
         {
+            hpx::async<create_aliens_action_type>(id);
             //aliens_active_future.push_back(hpx::async<active_action_type>);
-            tup_fut_type temp;// = tup_fut_type();
-            hpx::util::get<0>(temp) = boost::move(hpx::async<active_action_type>(id));
-            hpx::util::get<1>(temp) = id;
-            vec_fut_aliens_active.push_back(boost::move(temp));
+            hpx::future<bool> f = hpx::async<active_action_type>(id);
+            vec_fut_aliens_active.emplace(
+                vec_fut_aliens_active.end()
+                , hpx::util::forward_as_tuple(std::move(f), id));
         }
 
         //num_antibodies_to_create: for now just create the number 
@@ -237,15 +241,18 @@ void process_foreignbodies(boost::program_options::variables_map & vm
 
         std::vector<hpx::future<void> > ret_fut;
         
-        BOOST_FOREACH(tup_fut_type tft, vec_fut_aliens_active)
+        //TODO: target just active alien factory
+        BOOST_FOREACH(tup_fut_type& tft, vec_fut_aliens_active)
         {
             //bool temp = hpx::util::get<0>(tft).get();
 
-            if (!hpx::util::get<0>(tft).get())
+            // Aliens Active
+            if (hpx::util::get<0>(tft).get())
             {
                 BOOST_FOREACH(hpx::id_type id, ab_factories)
                 {
-                    ret_fut.push_back(hpx::async<target_action>(id, hpx::util::get<1>(tft)));
+                    ret_fut.push_back(hpx::async<target_action>(
+                        id, hpx::util::get<1>(tft)));
                 }
             }
             else
@@ -254,12 +261,16 @@ void process_foreignbodies(boost::program_options::variables_map & vm
             }
         }
 
+        hpx::wait_all(ret_fut);
+
         if (!active_alien_factories_count)
         {
             alien_factories_active = false;
         }        
     }
 }
+
+//HPX_PLAIN_ACTION(process_foreignbodies);
 
 
 #endif // IMMUNE_SYSTEM_ANTIBODIES_HPP

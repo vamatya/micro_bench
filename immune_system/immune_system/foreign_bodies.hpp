@@ -163,6 +163,7 @@ inline std::vector<hpx::id_type> create_alien_factory(
     typedef std::vector<hpx::id_type> id_vector_type;
 
     std::size_t num_alien_factories = vm["total-alien-factory"].as<std::size_t>();
+    std::size_t max_aliens_limit = vm["max-aliens-num"].as<std::size_t>();
 
     hpx::components::component_type type =
         hpx::components::get_component_type<AlienFactory>();
@@ -215,8 +216,8 @@ inline std::vector<hpx::id_type> create_alien_factory(
 
     BOOST_FOREACH(hpx::id_type id, hpx::util::locality_results(res))
     {
-        //init_futures.push_back(
-        //    hpx::async<typename AlienFactory::init_action>(id));
+        init_futures.push_back(
+            hpx::async<typename AlienFactory::init_action>(id,id,max_aliens_limit));
         alien_factories.push_back(id);
     }
     hpx::wait_all(init_futures);
@@ -236,4 +237,16 @@ inline std::vector<hpx::id_type> create_alien_factory(
 
 }
 
+template <typename AlienFactory>
+void activate_aliens(std::vector<hpx::id_type>& al_factories)
+{
+    typedef AlienFactory::create_aliens_action create_action_type;
+
+    BOOST_FOREACH(hpx::id_type id, al_factories)
+    {
+        hpx::async<create_action_type>(id);
+    }
+}
+
+//HPX_PLAIN_ACTION(activate_aliens);
 #endif //IMMUNE_SYSTEM_ALIENS_HPP

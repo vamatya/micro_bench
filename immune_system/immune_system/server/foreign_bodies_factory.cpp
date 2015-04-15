@@ -26,3 +26,6 @@ HPX_REGISTER_ACTION(af_type::alien_connect_action
 
 HPX_REGISTER_ACTION(af_type::aliens_active_action
     , alien_factory_aliens_active_action);
+
+HPX_REGISTER_ACTION(af_type::antibodies_deficit_action
+    , alien_factory_antibodies_deficit_action);

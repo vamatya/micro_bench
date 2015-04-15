@@ -11,7 +11,11 @@ struct bodies
     hpx::id_type foreign_object;
     bool foreign_object_attached; //fo_
 public:
-    bodies(){}
+    bodies()
+        :foreign_object_attached(false)
+    {
+    }
+
     bodies(bool fo_attached, hpx::id_type id)
         :foreign_object_attached(fo_attached)
         , my_id(id)
