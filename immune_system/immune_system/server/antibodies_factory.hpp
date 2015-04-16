@@ -35,7 +35,10 @@ namespace immune_system{
 
             //TO DO: create another header file.
 
-            antibodies_factory(){}
+            antibodies_factory()
+            {
+                time_.restart();
+            }
 
 //             antibodies_factory(hpx::id_type my_id, std::size_t lcl_num, std::size_t max_antibodies)
 //                 : my_id_(my_id)
@@ -188,13 +191,15 @@ namespace immune_system{
                     // P(t) = P(0)* power(2,t/1000)  
                     // population doubles every 10 mili-seconds
 
-                    BOOST_ASSERT(max_aliens_ > 0);
+                    //BOOST_ASSERT(max_aliens_ > 0);
+                    BOOST_ASSERT(max_antibodies_per_loc_ > 0);
 
-                    if (antibodies_.size() < max_aliens_)
+                    //if (antibodies_.size() < max_aliens_)
+                    if (antibodies_.size() < max_antibodies_per_loc_)
                     {
                         // input in step of microseconds. 
                         y = static_cast<std::size_t>(
-                            antibodies_.size()*std::pow(2.0, time_.elapsed_microseconds() / 1000000));
+                            antibodies_.size()*std::pow(2.0, time_.elapsed_microseconds() / 200000000));
 
                         //max_aliens_* std::exp(
                         //    -1 * std::exp(
@@ -202,14 +207,20 @@ namespace immune_system{
                     }
                 }
 
-                if (antibodies_.size() + y < max_aliens_)
+                //if (antibodies_.size() + y < max_aliens_)
+                if (antibodies_.size() + y < max_antibodies_per_loc_)
                     return y;
                 else
                 {
-                    if ((max_aliens_ - antibodies_.size()) > 0)
-                        return (max_aliens_ - antibodies_.size());
-                    else
+                    //if ((max_aliens_ - antibodies_.size()) > 0)
+                    if ((max_antibodies_per_loc_ - antibodies_.size()) > 0)
+                    {
+                        //return (max_aliens_ - antibodies_.size());
+                        return (max_antibodies_per_loc_ - antibodies_.size());
+                    }
+                    else{
                         return 0;
+                    }
                 }
 
             }
@@ -239,7 +250,7 @@ namespace immune_system{
 
                 if (deficit_num)
                 {
-                    if (deficit_num < ab_num_create)
+                    if (deficit_num > ab_num_create)
                     {
                         ab_num_create = deficit_num;
                     }
@@ -261,31 +272,39 @@ namespace immune_system{
                 typedef immune_system::server::antibodies::init_action
                         init_action_type;
 
-                std::vector<hpx::id_type> vec_id = std::move(f_vec_id.get());
+                std::vector<hpx::id_type> vec_id = f_vec_id.get();
 
                 tup_type temp;
                 //TODO: faster version?
-                while (vec_id.size() != 0)
+                std::size_t cnt = vec_id.size();
+                
+                //TO DO: Revisit this section
+                //while (cnt != 0)
+                //{
+                BOOST_FOREACH(hpx::id_type id, vec_id)
                 {
-                    BOOST_FOREACH(hpx::id_type id, vec_id)
-                    {
                         
-                        f_tup_type res_f = hpx::async<
-                            connect_action_type>(id, id, alien_factory);
-                        temp = std::move(res_f.get());
-                        if (hpx::util::get<0>(temp))
-                        {
-                            bodies bd(true, id);
-                            bd.foreign_object = hpx::util::get<1>(temp);
-                            antibodies_.push_back(bd);
-                        }
-                        else
-                        {
-                            bodies bd(false, id);
-                            antibodies_.push_back(bd);
-                        }
+                    f_tup_type res_f = hpx::async<
+                        connect_action_type>(id, id, alien_factory);
+                    temp = res_f.get();
+                    bodies bd(id);
+                    if (hpx::util::get<0>(temp))
+                    {
+                        bd.foreign_object_attached
+                            = hpx::util::get<0>(temp);
+                        bd.foreign_object = hpx::util::get<1>(temp);
+                        antibodies_.push_back(bd);
                     }
+                    else
+                    {
+                        bodies bd(false, id);
+                        bd.foreign_object_attached
+                            = hpx::util::get<0>(temp);
+                        antibodies_.push_back(bd);
+                    }
+                        
                 }
+                //}
 
             }
             
@@ -315,7 +334,7 @@ namespace immune_system{
             std::size_t max_antibodies_per_loc_;
             std::size_t max_aliens_per_loc_;
             std::size_t num_localities_;
-            std::size_t max_aliens_;
+            //std::size_t max_aliens_;
 
             hpx::util::high_resolution_timer time_;
 

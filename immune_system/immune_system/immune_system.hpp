@@ -226,7 +226,8 @@ void process_foreignbodies(boost::program_options::variables_map & vm
 
         BOOST_FOREACH(hpx::id_type id, aliens_factories)
         {
-            hpx::async<create_aliens_action_type>(id);
+            hpx::future<void> fut_temp = hpx::async<create_aliens_action_type>(id);
+            fut_temp.get();
             //aliens_active_future.push_back(hpx::async<active_action_type>);
             hpx::future<bool> f = hpx::async<active_action_type>(id);
             vec_fut_aliens_active.emplace(
@@ -266,7 +267,9 @@ void process_foreignbodies(boost::program_options::variables_map & vm
         if (!active_alien_factories_count)
         {
             alien_factories_active = false;
-        }        
+        }
+
+        vec_fut_aliens_active.clear();
     }
 }
 

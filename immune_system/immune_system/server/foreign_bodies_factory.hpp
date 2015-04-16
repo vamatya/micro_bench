@@ -48,6 +48,7 @@ namespace immune_system {
                 , t_max_reached_(false,0)
                 , anti_body_count_(0)
             {
+                time_.restart();
                 spawn_n_aliens(1);
             }
             ~alien_factory(){}
@@ -87,15 +88,17 @@ namespace immune_system {
                 //tup_type temp = std::make_tuple(false,invalid_type);
 
                 hpx::future<bool> res;
-                BOOST_FOREACH(bodies b, aliens_)
+                BOOST_FOREACH(bodies& b, aliens_)
                 {
                     if (!b.foreign_object_attached)
                     {
                         res = hpx::async<action_type>(b.my_id, ab_id);
-                        BOOST_ASSERT(res.get() == true);
+                        //BOOST_ASSERT(res.get() == true);
                         hpx::util::get<0>(res_tup) = res.get();
+                        //BOOST_ASSERT(res.get() == hpx::util::get<0>(res_tup));
                         hpx::util::get<1>(res_tup) = b.my_id;
                         b.foreign_object = ab_id; 
+                        b.foreign_object_attached = true;
                         ++anti_body_count_;
                         break;
                     }
@@ -188,7 +191,7 @@ namespace immune_system {
                     {
                         // input in step of microseconds. 
                         y = static_cast<std::size_t>(
-                            aliens_.size()*std::pow(2.0, time_.elapsed_microseconds() / 10000));
+                            aliens_.size()*std::pow(2.0, time_.elapsed_microseconds() / 100000000));
                 
                             //max_aliens_* std::exp(
                             //    -1 * std::exp(

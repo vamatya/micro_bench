@@ -58,17 +58,17 @@ namespace immune_system
             HPX_DEFINE_COMPONENT_ACTION(aliens, init);
 
             bool ab_connect(hpx::id_type antibody)
-            {               
+            {   
+                bool ret_val = false;
                 hpx::id_type invalid_type;
-                if (body_.foreign_object != invalid_type)
-                    return false;
-                else
+                if (body_.foreign_object == invalid_type)
                 {
                     body_.foreign_object = antibody;
                     body_.foreign_object_attached = true;
-                    //return true;
-                    return body_.foreign_object_attached;
+                    ret_val = true;
                 }
+
+                return ret_val;
             }
 
             HPX_DEFINE_COMPONENT_ACTION(aliens, ab_connect);
