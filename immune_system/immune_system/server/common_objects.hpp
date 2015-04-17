@@ -9,10 +9,12 @@ struct bodies
 {
     hpx::id_type my_id;
     hpx::id_type foreign_object;
-    bool foreign_object_attached; //fo_
+    bool foreign_object_attached; 
+    bool migrated;
 public:
     bodies()
         :foreign_object_attached(false)
+        , migrated(false)
     {
     }
 

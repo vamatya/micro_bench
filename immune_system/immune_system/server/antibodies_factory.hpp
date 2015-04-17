@@ -10,7 +10,8 @@
 #include <hpx/hpx_fwd.hpp>
 #include <hpx/include/components.hpp>
 #include <hpx/runtime/actions/component_action.hpp>
-#include <hpx/runtime/components/server/managed_component_base.hpp>
+//#include <hpx/runtime/components/server/managed_component_base.hpp>
+//#include <hpx/runtime/components/migrate_component.hpp>
 
 #include <hpx/components/distributing_factory/distributing_factory.hpp>
 #include <hpx/util/tuple.hpp>
@@ -31,9 +32,8 @@ namespace immune_system{
             : hpx::components::simple_component_base<antibodies_factory>
         {
             typedef hpx::util::tuple<bool, hpx::id_type> tup_type;
-            //Note: For now maintain list of all spawned antibodies. 
-
-            //TO DO: create another header file.
+            // old, new
+            typedef hpx::util::tuple<hpx::id_type, hpx::id_type> old_new_tup_type;
 
             antibodies_factory()
             {
@@ -265,7 +265,6 @@ namespace immune_system{
                     spawn_antibodies_action_type;
                 hpx::future<std::vector<hpx::id_type> > f_vec_id;
                 f_vec_id = hpx::async<spawn_antibodies_action_type>(
-                    //this->gid_,ab_num_create);
                     my_id_, ab_num_create);
 
                 std::vector<hpx::future<void> > vec_fut;
@@ -281,7 +280,7 @@ namespace immune_system{
                 //TO DO: Revisit this section
                 //while (cnt != 0)
                 //{
-                BOOST_FOREACH(hpx::id_type id, vec_id)
+                BOOST_FOREACH(hpx::id_type& id, vec_id)
                 {
                         
                     f_tup_type res_f = hpx::async<
@@ -306,6 +305,33 @@ namespace immune_system{
                 }
                 //}
 
+                // Migrate Antibodies to localities where aliens are located
+
+                BOOST_FOREACH(bodies& bd, antibodies_)
+                {
+                    if((bd.foreign_object_attached) && (!bd.migrated))
+                    {
+                       
+                        hpx::id_type remote_loc = 
+                            hpx::naming::get_locality_from_id(
+                                bd.foreign_object);
+                        hpx::id_type my_loc = 
+                            hpx::naming::get_locality_from_id(
+                                bd.my_id);
+                        if (remote_loc != my_loc)
+                        {
+                            //hpx::future<hpx::id_type> fut
+                                //= 
+                                  hpx::components::migrate<
+                                    immune_system::server::antibodies>
+                                        (bd.my_id, remote_loc);
+                        }
+                            
+                    }
+                }
+
+                if(migration_futures_.size() != NULL)
+                    hpx::wait_all(migration_futures_);
             }
             
             HPX_DEFINE_COMPONENT_ACTION(antibodies_factory, target_aliens);
@@ -324,20 +350,17 @@ namespace immune_system{
             hpx::id_type my_id_;
             std::size_t produced_count;
             std::size_t my_rank_;
-
-            std::vector<hpx::id_type> antibody_factories_;
-            std::vector<hpx::id_type> alien_factories_; //single factory for now
-            std::vector<bodies> antibodies_;
-            //std::vector<hpx::util::tuple<bool, hpx::id_type> > antibodies_;
-            //std::vector<hpx::id_type> antibodies_;
-
             std::size_t max_antibodies_per_loc_;
             std::size_t max_aliens_per_loc_;
             std::size_t num_localities_;
-            //std::size_t max_aliens_;
+
+            std::vector<hpx::future<hpx::id_type> > migration_futures_;
+            std::vector<hpx::id_type> antibody_factories_;
+            std::vector<hpx::id_type> alien_factories_; 
+            std::vector<bodies> antibodies_;
+            std::vector<old_new_tup_type> ab_after_migration_;
 
             hpx::util::high_resolution_timer time_;
-
         };
     }
 }
