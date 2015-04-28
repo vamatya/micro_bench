@@ -8,8 +8,8 @@
 #include <hpx/runtime/components/component_factory.hpp>
 #include <hpx/runtime.hpp>
 
-#include <hpx/util/portable_binary_iarchive.hpp>
-#include <hpx/util/portable_binary_oarchive.hpp>
+//#include <hpx/util/portable_binary_iarchive.hpp>
+//#include <hpx/util/portable_binary_oarchive.hpp>
 
 #include "antibodies.hpp"
 
@@ -17,7 +17,8 @@
 
 typedef immune_system::server::antibodies antibodies_type;
 
-HPX_REGISTER_MINIMAL_COMPONENT_FACTORY(
+//HPX_REGISTER_MINIMAL_COMPONENT_FACTORY(
+HPX_REGISTER_COMPONENT(
     hpx::components::managed_component < antibodies_type >
     , antibodies_component);
 

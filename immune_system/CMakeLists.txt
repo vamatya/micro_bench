@@ -28,7 +28,7 @@ foreach(subdir ${subdirs})
 
   set(dependencies
       ${subdir}_component
-      distributing_factory_component
+      #distributing_factory_component
       iostreams_component
       )
 

@@ -8,10 +8,10 @@
 #include <hpx/include/components.hpp>
 
 #include <hpx/runtime/actions/component_action.hpp>
-#include <hpx/util/portable_binary_iarchive.hpp>
-#include <hpx/util/portable_binary_oarchive.hpp>
+//#include <hpx/util/portable_binary_iarchive.hpp>
+//#include <hpx/util/portable_binary_oarchive.hpp>
 
-#include <hpx/components/distributing_factory/distributing_factory.hpp>
+//#include <hpx/components/distributing_factory/distributing_factory.hpp>
 #include <boost/serialization/version.hpp>
 #include <boost/serialization/export.hpp>
 

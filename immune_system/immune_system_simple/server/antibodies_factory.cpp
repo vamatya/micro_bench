@@ -9,8 +9,8 @@
 #include <hpx/runtime/components/component_factory.hpp>
 #include <hpx/runtime.hpp>
 
-#include <hpx/util/portable_binary_iarchive.hpp>
-#include <hpx/util/portable_binary_oarchive.hpp>
+//#include <hpx/util/portable_binary_iarchive.hpp>
+//#include <hpx/util/portable_binary_oarchive.hpp>
 
 #include "antibodies_factory.hpp"
 
@@ -19,7 +19,8 @@
 
 typedef immune_system::server::antibodies_factory abf_type;
 
-HPX_REGISTER_MINIMAL_COMPONENT_FACTORY(
+//HPX_REGISTER_MINIMAL_COMPONENT_FACTORY(
+HPX_REGISTER_COMPONENT(
     hpx::components::managed_component <abf_type>
     , abf_component);
 

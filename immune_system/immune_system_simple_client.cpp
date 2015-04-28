@@ -20,14 +20,14 @@ int hpx_main(boost::program_options::variables_map & vm)
     typedef immune_system::server::antibodies_factory::print_stat_action action_type;
 
     std::vector<hpx::future<void> > stats_fut;
-    BOOST_FOREACH(hpx::id_type id, ab_fac)
+    for (hpx::id_type& id: ab_fac)
     {
         stats_fut.push_back(hpx::async<action_type>(id));
     }
 
     hpx::wait_all(stats_fut);
 
-    BOOST_FOREACH(hpx::future<void>& fut, stats_fut)
+    for (hpx::future<void>& fut: stats_fut)
     {
         fut.get();
     }

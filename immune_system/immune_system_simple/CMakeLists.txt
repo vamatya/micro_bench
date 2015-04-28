@@ -46,6 +46,6 @@ source_group("Source Files" FILES ${source_files})
 add_hpx_component(immune_system_simple
   SOURCES ${sources}
   HEADERS ${headers}
-  DEPENDENCIES distributing_factory_component
+  #DEPENDENCIES distributing_factory_component
   FOLDER "Micro_bench/Immune_system"
   )

@@ -9,7 +9,7 @@
 #include <hpx/hpx_fwd.hpp>
 #include <hpx/include/components.hpp>
 #include <hpx/runtime/actions/component_action.hpp>
-#include <hpx/components/distributing_factory/distributing_factory.hpp>
+//#include <hpx/components/distributing_factory/distributing_factory.hpp>
 #include <hpx/util/tuple.hpp>
 
 #include "common_objects.hpp"
@@ -88,7 +88,7 @@ namespace immune_system {
                 //tup_type temp = std::make_tuple(false,invalid_type);
 
                 hpx::future<bool> res;
-                BOOST_FOREACH(bodies& b, aliens_)
+                for(bodies& b: aliens_)
                 {
                     if (!b.foreign_object_attached)
                     {
@@ -112,56 +112,70 @@ namespace immune_system {
 
             void spawn_n_aliens(std::size_t num)
             {
-                typedef hpx::util::remote_locality_result value_type;
-                typedef std::pair<std::size_t, std::vector<value_type> > result_type;
+                //typedef hpx::util::remote_locality_result value_type;
+                //typedef std::pair<std::size_t, std::vector<value_type> > result_type;
 
-                result_type res;
+                typedef std::vector<hpx::id_type> id_vector_type;
+                //id_vector_type res;
 
-                hpx::components::component_type c_type =
-                    hpx::components::get_component_type<immune_system::server::aliens>();
+//                 hpx::components::component_type c_type =
+//                     hpx::components::get_component_type<immune_system::server::aliens>();
                 hpx::id_type this_locality = hpx::find_here();
-                using hpx::components::distributing_factory;
+//                 using hpx::components::distributing_factory;
+// 
+//                 typedef
+//                 hpx::components::server::runtime_support::bulk_create_components_action
+//                 action_type;
 
-                typedef
-                hpx::components::server::runtime_support::bulk_create_components_action
-                action_type;
+                //typedef hpx::future<std::vector<hpx::naming::gid_type> > future_type;
 
-                typedef hpx::future<std::vector<hpx::naming::gid_type> > future_type;
-
-                future_type f;
-                {
-                    hpx::lcos::packaged_action<action_type
-                        , std::vector<hpx::naming::gid_type> > p;
-                    p.apply(hpx::launch::async, this_locality, c_type, num);
-                    f = p.get_future();
-                }
-
-                res.first = num;
-                res.second.push_back(
-                    value_type(this_locality.get_gid(), c_type));
-                res.second.back().gids_ = boost::move(f.get());
+//                 future_type f;
+//                 {
+//                     hpx::lcos::packaged_action<action_type
+//                         , std::vector<hpx::naming::gid_type> > p;
+//                     p.apply(hpx::launch::async, this_locality, c_type, num);
+//                     f = p.get_future();
+//                 }
+// 
+//                 res.first = num;
+//                 res.second.push_back(
+//                     value_type(this_locality.get_gid(), c_type));
+//                 res.second.back().gids_ = boost::move(f.get());
 
                 //id_vector_type comps;
 
                 //comps.reserve(num);
+                hpx::future<id_vector_type> fut_ivt =
+                    hpx::new_<immune_system::server::aliens[]>(this_locality, num);
+                
+                id_vector_type res = fut_ivt.get();
 
-                std::vector<hpx::util::locality_result> res2;
-                BOOST_FOREACH(hpx::util::remote_locality_result const& r1, res.second)
-                {
-                    res2.push_back(r1);
-                }
+                
 
+//                 std::vector<hpx::util::locality_result> res2;
+//                 BOOST_FOREACH(hpx::util::remote_locality_result const& r1, res.second)
+//                 {
+//                     res2.push_back(r1);
+//                 }
+// 
                 typedef immune_system::server::aliens::init_action 
                     init_action_type;
 
                 std::vector<hpx::future<void> > vec_fut;
-
-                BOOST_FOREACH(hpx::id_type id, hpx::util::locality_results(res2))
+                
+                for (hpx::id_type id : res)
                 {
                     bodies temp(false, id);
                     aliens_.push_back(temp);
                     vec_fut.push_back(hpx::async<init_action_type>(id, id));
                 }
+// 
+//                 BOOST_FOREACH(hpx::id_type id, hpx::util::locality_results(res2))
+//                 {
+//                     bodies temp(false, id);
+//                     aliens_.push_back(temp);
+//                     vec_fut.push_back(hpx::async<init_action_type>(id, id));
+//                 }
 
 //                 BOOST_FOREACH(hpx::id_type id, hpx::util::locality_results(res2))
 //                 {
@@ -299,14 +313,14 @@ namespace immune_system {
 
             mutex_type mtx;
 
-            friend class boost::serialization::access;
-            template<class Archive>
-            void serialize(Archive & ar, const unsigned int version){
-                ar & aliens_;
-                ar & tup_;
-                ar & t_;
-                ar & t_max_reached_;
-            }
+//             friend class boost::serialization::access;
+//             template<class Archive>
+//             void serialize(Archive & ar, const unsigned int version){
+//                 ar & aliens_;
+//                 ar & tup_;
+//                 ar & t_;
+//                 ar & t_max_reached_;
+//             }
             
         };
     }

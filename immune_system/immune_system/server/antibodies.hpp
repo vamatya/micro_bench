@@ -146,14 +146,14 @@ namespace immune_system {
             std::size_t gen_id;
             //std::size_t fb_contact_count;
 
-            friend class boost::serialization::access;
-            template<class Archive>
-            void serialize(Archive & ar, const unsigned int version){
-                ar & my_id_;
-                ar & tup_;
-//                 ar & t_;
-//                 ar & t_max_reached_;
-            }
+//             friend class boost::serialization::access;
+//             template<class Archive>
+//             void serialize(Archive & ar, const unsigned int version){
+//                 ar & my_id_;
+//                 ar & tup_;
+// //                 ar & t_;
+// //                 ar & t_max_reached_;
+//             }
         };
     }
 }
