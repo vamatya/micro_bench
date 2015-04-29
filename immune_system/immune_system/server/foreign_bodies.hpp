@@ -10,11 +10,6 @@
 #include <hpx/include/components.hpp>
 #include <hpx/runtime/actions/component_action.hpp>
 
-//#include <immune_system/immune_system/server/foreign_bodies_factory.hpp>
-//#include <immune_system/immune_system/server/antibodies_factory.hpp>
-//#include <immune_system/server/antibodies.hpp>
-
-//#include <immune_system/server/antibodies.hpp>
 #include "common_objects.hpp"
 
 
@@ -113,9 +108,6 @@ namespace immune_system
 //            HPX_DEFINE_COMPONENT_ACTION(aliens, fission);
         private:
             bodies body_;
-            //hpx::id_type my_id_;
-            //hpx::id_type ab_;
-            //std::vector<hpx::id_type> ab_contact_;
             hpx::util::high_resolution_timer t_;
         };
 

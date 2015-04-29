@@ -10,15 +10,9 @@
 #include <hpx/hpx_fwd.hpp>
 #include <hpx/include/components.hpp>
 #include <hpx/runtime/actions/component_action.hpp>
-//#include <hpx/runtime/components/server/managed_component_base.hpp>
 
-//#include <immune_system/server/antibodies_factory.hpp>
-//#include <immune_system/immune_system/server/foreign_bodies_factory.hpp>
 #include "common_objects.hpp"
 #include "foreign_bodies_factory.hpp"
-//#include "foreign_bodies.hpp"
-//#include "antibodies_factory.hpp"
-//#include <immune_system/immune_system/server/foreign_bodies.hpp>
 
 //struct immune_system::server::alien_factory;
 
@@ -64,13 +58,6 @@ namespace immune_system {
                 body_.my_id = my_id;
 
                 hpx::id_type invalid_type;
-
-                //if(!connect.get())
-                {
-                    //notify antibodies_factory that connection failed
-                    //typedef components::antibodies_factory::noconnect_notify_action 
-                    //action_type;
-                }
             }
 
             void init(hpx::id_type my_id)
@@ -128,14 +115,9 @@ namespace immune_system {
 
             HPX_DEFINE_COMPONENT_ACTION(antibodies, alien_connect);
 
-//             template <typename Archive>
-//             void serialize(Archive&ar, unsigned version) {}
-
         private:
             bodies body_;
-            //hpx::id_type my_id_;
             hpx::id_type target_factory_;
-            //hpx::id_type target_alien_;
 
             hpx::id_type origin_loc_id_;
             //bool alien_attached_;
@@ -144,7 +126,6 @@ namespace immune_system {
 
             std::size_t origin_loc_rank_;
             std::size_t gen_id;
-            //std::size_t fb_contact_count;
 
 //             friend class boost::serialization::access;
 //             template<class Archive>
@@ -175,19 +156,4 @@ HPX_REGISTER_ACTION_DECLARATION(
     , antibodies_init_action
 )
 
-/*HPX_REGISTER_ACTION_DECLARATION(
-    ::components::aliens::ab_connect_action,
-    aliens_ab_connect_action
-    );
-
-HPX_REGISTER_ACTION_DECLARATION(
-    ::components::aliens::alien_active_action,
-    aliens_alien_active_action
-    );
-
-HPX_REGISTER_ACTION_DECLARATION(
-    ::components::aliens::send_spawn_signal_action,
-    aliens_send_spawn_signal_action
-    );
-    */
 #endif //IMMUNE_SYSTEM_SERVER_ANTIBODIES_HPP
