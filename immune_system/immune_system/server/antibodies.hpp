@@ -123,18 +123,21 @@ namespace immune_system {
             //bool alien_attached_;
 
             tup_type tup_;
-
             std::size_t origin_loc_rank_;
             std::size_t gen_id;
 
-//             friend class boost::serialization::access;
-//             template<class Archive>
-//             void serialize(Archive & ar, const unsigned int version){
-//                 ar & my_id_;
-//                 ar & tup_;
-// //                 ar & t_;
-// //                 ar & t_max_reached_;
-//             }
+            friend class hpx::serialization::access;
+            template<class Archive>
+            void serialize(Archive & ar, const unsigned int version){
+                ar & body_;
+                ar & target_factory_;
+                ar & origin_loc_id_;
+                ar & tup_;
+                ar & origin_loc_rank_;
+                ar & gen_id;
+//                 ar & t_;
+//                 ar & t_max_reached_;
+            }
         };
     }
 }

@@ -268,11 +268,10 @@ namespace immune_system{ namespace server
                             bd.my_id);
                     if (remote_loc != my_loc)
                     {
-                        //hpx::future<hpx::id_type> fut
-                            //= 
-                                hpx::components::migrate<
-                                immune_system::server::antibodies>
-                                    (bd.my_id, remote_loc);
+                        hpx::future<hpx::id_type> fut = 
+                            hpx::components::migrate<
+                            immune_system::server::antibodies>
+                                (bd.my_id, remote_loc);
                     }
                             
                 }

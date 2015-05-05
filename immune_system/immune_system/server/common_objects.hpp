@@ -11,6 +11,17 @@ struct bodies
     hpx::id_type foreign_object;
     bool foreign_object_attached; 
     bool migrated;
+
+    friend class hpx::serialization::access;
+    template <class Archive>
+    void serialize(Archive & ar, const unsigned int version)
+    {
+        ar & my_id;
+        ar & foreign_object;
+        ar & foreign_object_attached;
+        ar & migrated;
+    }
+
 public:
     bodies()
         :foreign_object_attached(false)

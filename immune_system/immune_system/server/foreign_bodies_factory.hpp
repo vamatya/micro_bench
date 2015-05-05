@@ -27,7 +27,7 @@ namespace immune_system { namespace server
     struct alien_factory
         : hpx::components::simple_component_base<alien_factory>
     {
-        typedef hpx::lcos::local::spinlock mutex_type;
+        //typedef hpx::lcos::local::spinlock mutex_type;
         typedef hpx::util::tuple<bool, hpx::id_type> tup_type;
 
         //Note: For now maintain list of all spawned aliens. 
@@ -156,7 +156,7 @@ namespace immune_system { namespace server
         // TODO: 
         void migrate_update_count()
         {
-            mutex_type::scoped_lock lk(mtx);
+            //mutex_type::scoped_lock lk(mtx);
             ++anti_body_count_;
         }
 
@@ -232,7 +232,7 @@ namespace immune_system { namespace server
         hpx::util::high_resolution_timer time_;
         hpx::util::tuple<bool, std::uint64_t> t_max_reached_;
 
-        mutex_type mtx;
+        //mutex_type mtx;
 
 //             friend class boost::serialization::access;
 //             template<class Archive>
